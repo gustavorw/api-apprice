@@ -1,0 +1,29 @@
+{
+  "name": "api-apprice",
+  "version": "1.0.0",
+  "description": "api apprice",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavorw/api-apprice.git"
+  },
+  "author": "bdk & locky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gustavorw/api-apprice/issues"
+  },
+  "homepage": "https://github.com/gustavorw/api-apprice#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.14.0",
+    "prisma": "^4.10.1",
+    "tsx": "^3.12.3",
+    "typescript": "^4.9.5"
+  }
+}
