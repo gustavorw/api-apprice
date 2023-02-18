@@ -4,6 +4,7 @@
   "description": "api apprice",
   "main": "index.js",
   "scripts": {
+    "start:dev": "tsx watch src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
