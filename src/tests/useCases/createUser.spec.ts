@@ -58,4 +58,19 @@ describe('test create user use case', () => {
         await sut.execute(data)
         expect(encrypterSpy).toHaveBeenCalledWith('any_password')
     })
+
+    test('test call', async () => {
+        const { sut, userRepositoryStub } = makeSut()
+        const userRepositoryStubSpy = vi.spyOn(userRepositoryStub, 'create')
+        const data = {
+            name: 'any_name',
+            email: 'any_email@email.com',
+            price_hour: 10.5,
+            password: 'hash_password',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }
+        await sut.execute(data)
+        expect(userRepositoryStubSpy).toHaveBeenCalledWith(data)
+    })
 })
