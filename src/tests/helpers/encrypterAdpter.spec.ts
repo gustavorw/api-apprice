@@ -18,10 +18,13 @@ describe('test encrypter adapter', () => {
         await sut.hash('any_password')
         expect(hashSpy).toHaveBeenCalledWith('any_password', salt)
     })
-    // finalizar teste
-    // test('test return hashed password', async () => {
-    //     const sut = makeSut()
-    //     const hashedPassword = await sut.hash('any_password')
-    //     expect(hashedPassword).toBe('hash')
-    // })
+
+    test('test return hashed password', async () => {
+        const sut = makeSut()
+        vi.spyOn(sut, 'hash').mockReturnValue(
+            new Promise((resolve) => resolve('hash_password'))
+        )
+        const hashedPassword = await sut.hash('any_password')
+        expect(hashedPassword).toBe('hash_password')
+    })
 })
