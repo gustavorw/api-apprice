@@ -11,7 +11,7 @@ type CreatedUser = {
     id: number
     name: string
     email: string
-    password: string
+    password?: string
     price_hour: number
     creatadAt?: Date | null
     updatedAt?: Date | null
