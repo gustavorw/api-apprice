@@ -9,8 +9,11 @@ class CreateUserUseCase implements ICreateUser {
         private readonly encrypter: IEncrypter
     ) {}
 
-    async execute(data: UserSchema): Promise<CreatedUser> {
-        await this.userRepository.getUserByEmail(data.email)
+    async execute(data: UserSchema): Promise<CreatedUser | Error> {
+        const userExists = await this.userRepository.getUserByEmail(data.email)
+        if (userExists) {
+            return new Error('Account with this email already exists!')
+        }
         const hashPassword = await this.encrypter.hash(data.password)
         const newUser = await this.userRepository.create(
             Object.assign({}, data, {
