@@ -13,7 +13,7 @@ type CreatedUser = {
     email: string
     password?: string
     price_hour: number
-    creatadAt?: Date | null
+    createdAt?: Date | null
     updatedAt?: Date | null
 }
 
