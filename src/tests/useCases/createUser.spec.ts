@@ -22,6 +22,9 @@ const makeEncrypter = (): IEncrypter => {
 
 const makeUserRepository = (): IUserRepository => {
     class UserRepositoryStub implements IUserRepository {
+        getUserByEmail(email: string): Promise<CreatedUser | null> {
+            throw new Error('Method not implemented.')
+        }
         async create(data: UserSchema): Promise<CreatedUser> {
             const fake = {
                 id: 1,

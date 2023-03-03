@@ -1,4 +1,4 @@
-import { describe, test, expect, afterAll } from 'vitest'
+import { describe, test, expect, afterAll, vi } from 'vitest'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
 import { UserRepository } from '../../../repositories/user/userRepository'
 import { clientdB } from '../../../database/client'
@@ -37,5 +37,11 @@ describe('test user repository', () => {
         expect(user.name).toBe('any_name')
         expect(user.email).toBe('any_email@mail.com')
         expect(user.password).toBe('any_password')
+    })
+
+    test('test get user by email', async () => {
+        const sut = makeSut()
+        const user = await sut.getUserByEmail('any_email@mail.com')
+        expect(user).toBeTruthy()
     })
 })
