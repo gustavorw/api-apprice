@@ -10,9 +10,14 @@ class CreateUserUseCase implements ICreateUser {
     ) {}
 
     async execute(data: UserSchema): Promise<CreatedUser> {
+        await this.userRepository.getUserByEmail(data.email)
         const hashPassword = await this.encrypter.hash(data.password)
         const newUser = await this.userRepository.create(
-            Object.assign({}, data, { password: hashPassword })
+            Object.assign({}, data, {
+                password: hashPassword,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            })
         )
         return newUser
     }
