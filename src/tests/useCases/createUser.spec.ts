@@ -22,8 +22,14 @@ const makeEncrypter = (): IEncrypter => {
 
 const makeUserRepository = (): IUserRepository => {
     class UserRepositoryStub implements IUserRepository {
-        getUserByEmail(email: string): Promise<CreatedUser | null> {
-            throw new Error('Method not implemented.')
+        async getUserByEmail(email: string): Promise<CreatedUser | null> {
+            const fake = {
+                id: 1,
+                name: 'any_name',
+                email: 'any_email@email.com',
+                price_hour: 10.5,
+            }
+            return new Promise((resolve) => resolve(fake))
         }
         async create(data: UserSchema): Promise<CreatedUser> {
             const fake = {
@@ -47,6 +53,26 @@ const makeSut = (): sutTypes => {
 }
 
 describe('test create user use case', () => {
+    test('test call getUserByEmail method to verify user exist', async () => {
+        const { sut, userRepositoryStub } = makeSut()
+        const userRepositoryStubSpy = vi.spyOn(
+            userRepositoryStub,
+            'getUserByEmail'
+        )
+        const data = {
+            name: 'any_name',
+            email: 'any_email@email.com',
+            price_hour: 10.5,
+            password: 'any_password',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }
+        await sut.execute(data)
+        expect(userRepositoryStubSpy).toHaveBeenCalledWith(
+            'any_email@email.com'
+        )
+    })
+
     test('test call hash password method', async () => {
         const { sut, encrypterStub } = makeSut()
         const encrypterSpy = vi.spyOn(encrypterStub, 'hash')
