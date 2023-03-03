@@ -23,13 +23,7 @@ const makeEncrypter = (): IEncrypter => {
 const makeUserRepository = (): IUserRepository => {
     class UserRepositoryStub implements IUserRepository {
         async getUserByEmail(email: string): Promise<CreatedUser | null> {
-            const fake = {
-                id: 1,
-                name: 'any_name',
-                email: 'any_email@email.com',
-                price_hour: 10.5,
-            }
-            return new Promise((resolve) => resolve(fake))
+            return new Promise((resolve) => resolve(null))
         }
         async create(data: UserSchema): Promise<CreatedUser> {
             const fake = {
@@ -70,6 +64,34 @@ describe('test create user use case', () => {
         await sut.execute(data)
         expect(userRepositoryStubSpy).toHaveBeenCalledWith(
             'any_email@email.com'
+        )
+    })
+
+    test('test return error if user exist', async () => {
+        const { sut, userRepositoryStub } = makeSut()
+        vi.spyOn(userRepositoryStub, 'getUserByEmail').mockReturnValue(
+            new Promise((resolve) =>
+                resolve({
+                    id: 1,
+                    name: 'any_name',
+                    email: 'any_email@email.com',
+                    price_hour: 10.5,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                })
+            )
+        )
+        const data = {
+            name: 'any_name',
+            email: 'any_email@email.com',
+            price_hour: 10.5,
+            password: 'any_password',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }
+        const userExists = await sut.execute(data)
+        expect(userExists).toEqual(
+            new Error('Account with this email already exists!')
         )
     })
 
