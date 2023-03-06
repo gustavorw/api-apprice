@@ -78,4 +78,18 @@ describe('test SignupController', () => {
             error: 'Account with this email already exists! Try with another email!',
         })
     })
+
+    test('test retun status 201 with correct values', async () => {
+        const { sut } = makeSut()
+        const httpResponse = await sut.handle(fakeData())
+        expect(httpResponse.statusCode).toBe(201)
+        expect(httpResponse.body).toEqual({
+            id: 1,
+            name: 'any_name',
+            email: 'any_email@email.com',
+            price_hour: 10.5,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        })
+    })
 })

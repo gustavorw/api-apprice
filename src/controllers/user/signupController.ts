@@ -1,4 +1,4 @@
-import { badRequest } from '../../helpers/http/errors'
+import { badRequest, created } from '../../helpers/http/errors'
 import { httpRequest, httpResponse } from '../../types/http'
 import { ICreateUser } from '../../useCases/user/createUser/ICreateUser'
 import { IController } from '../IController'
@@ -11,10 +11,7 @@ class SignupController implements IController {
         if (user instanceof Error) {
             return badRequest(user.message)
         }
-        return {
-            statusCode: 200,
-            body: '',
-        }
+        return created(user)
     }
 }
 
