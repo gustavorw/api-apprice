@@ -100,7 +100,9 @@ describe('test create user use case', () => {
 
         const userExists = await sut.execute(dataInput()[0])
         expect(userExists).toEqual(
-            new Error('Account with this email already exists!')
+            new Error(
+                'Account with this email already exists! Try with another email!'
+            )
         )
     })
 
