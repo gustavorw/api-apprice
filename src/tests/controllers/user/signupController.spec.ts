@@ -4,6 +4,7 @@ import { ICreateUser } from '../../../useCases/user/createUser/ICreateUser'
 import { UserSchema, CreatedUser } from '../../../types/user'
 import { IController } from '../../../controllers/IController'
 import { httpRequest } from '../../../types/http'
+import { ServerError } from '../../../helpers/http/serverError'
 
 describe('test SignupController', () => {
     type SutTypes = {
@@ -77,6 +78,20 @@ describe('test SignupController', () => {
         expect(httpResponse.body).toEqual({
             error: 'Account with this email already exists! Try with another email!',
         })
+    })
+
+    test('test return status 500 if create user case raise exception', async () => {
+        const { sut, createUserUseCaseStub } = makeSut()
+        vi.spyOn(createUserUseCaseStub, 'execute').mockImplementation(
+            async () =>
+                new Promise<CreatedUser>((resolve, reject) =>
+                    reject(new Error())
+                )
+        )
+
+        const httpResponse = await sut.handle(fakeData())
+        expect(httpResponse.statusCode).toBe(500)
+        expect(httpResponse.body).toEqual(new ServerError())
     })
 
     test('test retun status 201 with correct values', async () => {
