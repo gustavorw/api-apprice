@@ -2,31 +2,31 @@ import { describe, test, expect, afterAll, vi } from 'vitest'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
 import { UserRepository } from '../../../repositories/user/userRepository'
 import { clientdB } from '../../../database/client'
-import { UserSchema } from '../../../models/user'
+import { UserSchema } from '../../../types/user'
+
+const client = clientdB
+
+afterAll(async () => {
+    await client.user.deleteMany({})
+})
+
+const fakeData = (): UserSchema => {
+    const addUser = {
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        password: 'any_password',
+        price_hour: 10.5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    }
+    return addUser
+}
+
+const makeSut = (): IUserRepository => {
+    return new UserRepository(client)
+}
 
 describe('test user repository', () => {
-    const client = clientdB
-
-    afterAll(async () => {
-        await client.user.deleteMany({})
-    })
-
-    const fakeData = (): UserSchema => {
-        const addUser = {
-            name: 'any_name',
-            email: 'any_email@mail.com',
-            password: 'any_password',
-            price_hour: 10.5,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        }
-        return addUser
-    }
-
-    const makeSut = (): IUserRepository => {
-        return new UserRepository(client)
-    }
-
     test('test add user', async () => {
         const sut = makeSut()
         const user = await sut.create(fakeData())
