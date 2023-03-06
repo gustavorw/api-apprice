@@ -3,12 +3,22 @@ import { SignupController } from '../../../controllers/user/signupController'
 import { ICreateUser } from '../../../useCases/user/createUser/ICreateUser'
 import { UserSchema, CreatedUser } from '../../../types/user'
 import { IController } from '../../../controllers/IController'
+import { httpRequest } from '../../../types/http'
 
 describe('test SignupController', () => {
     type SutTypes = {
         sut: IController
         createUserUseCaseStub: ICreateUser
     }
+
+    const fakeData = (): httpRequest => ({
+        body: {
+            name: 'any_name',
+            email: 'any_email@email.com',
+            password: 'any_password',
+            price_hour: 10.5,
+        },
+    })
 
     const makeCreateUserUseCase = (): ICreateUser => {
         class CreateUserUseCaseStub implements ICreateUser {
@@ -39,20 +49,33 @@ describe('test SignupController', () => {
             createUserUseCaseStub,
             'execute'
         )
-        const data = {
-            body: {
-                name: 'any_name',
-                email: 'any_email@email.com',
-                password: 'any_password',
-                price_hour: 10.5,
-            },
-        }
-        await sut.handle(data)
+
+        await sut.handle(fakeData())
         expect(createUserUseCaseStubSpy).toHaveBeenCalledWith({
             name: 'any_name',
             email: 'any_email@email.com',
             password: 'any_password',
             price_hour: 10.5,
+        })
+    })
+
+    test('test return status 400 if email already exists', async () => {
+        const { sut, createUserUseCaseStub } = makeSut()
+
+        vi.spyOn(createUserUseCaseStub, 'execute').mockReturnValue(
+            new Promise((reject) =>
+                reject(
+                    new Error(
+                        'Account with this email already exists! Try with another email!'
+                    )
+                )
+            )
+        )
+
+        const httpResponse = await sut.handle(fakeData())
+        expect(httpResponse.statusCode).toBe(400)
+        expect(httpResponse.body).toEqual({
+            error: 'Account with this email already exists! Try with another email!',
         })
     })
 })
