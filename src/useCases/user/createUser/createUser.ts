@@ -1,5 +1,5 @@
 import { IEncrypter } from '../../../helpers/encrypter/IEncrypter'
-import { UserSchema, CreatedUser } from '../../../models/user'
+import { UserSchema, CreatedUser } from '../../../types/user'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
 import { ICreateUser } from './ICreateUser'
 

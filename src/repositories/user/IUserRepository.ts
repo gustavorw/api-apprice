@@ -1,4 +1,4 @@
-import { CreatedUser, UserSchema } from '../../models/user'
+import { CreatedUser, UserSchema } from '../../types/user'
 
 interface IUserRepository {
     create(data: UserSchema): Promise<CreatedUser>

@@ -1,4 +1,4 @@
-import { CreatedUser, UserSchema } from '../../../models/user'
+import { CreatedUser, UserSchema } from '../../../types/user'
 
 interface ICreateUser {
     execute(data: UserSchema): Promise<CreatedUser | Error>

@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 import { IEncrypter } from '../../helpers/encrypter/IEncrypter'
-import { UserSchema, CreatedUser } from '../../models/user'
+import { UserSchema, CreatedUser } from '../../types/user'
 import { IUserRepository } from '../../repositories/user/IUserRepository'
 import { ICreateUser } from '../../useCases/user/createUser/ICreateUser'
 import { CreateUserUseCase } from '../../useCases/user/createUser/createUser'
