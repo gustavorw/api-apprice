@@ -1,10 +1,15 @@
 import { describe, expect, test, vi } from 'vitest'
 import { SignupController } from '../../../controllers/user/signupController'
 import { ICreateUser } from '../../../useCases/user/createUser/ICreateUser'
-import { UserSchema, CreatedUser } from '../../../types/user'
+import {
+    UserSchema,
+    CreatedUser,
+    CreateUserUseCaseDTO,
+} from '../../../types/user'
 import { IController } from '../../../controllers/IController'
 import { httpRequest } from '../../../types/http'
 import { ServerError } from '../../../helpers/http/serverError'
+import { UserExists } from '../../../helpers/http/userExists'
 
 type SutTypes = {
     sut: IController
@@ -22,7 +27,7 @@ const fakeData = (): httpRequest => ({
 
 const makeCreateUserUseCase = (): ICreateUser => {
     class CreateUserUseCaseStub implements ICreateUser {
-        execute(data: UserSchema): Promise<CreatedUser | Error> {
+        execute(data: CreateUserUseCaseDTO): Promise<CreatedUser | UserExists> {
             const fakeAccount = {
                 id: 1,
                 name: 'any_name',
@@ -52,39 +57,30 @@ describe('test SignupController', () => {
         )
 
         await sut.handle(fakeData())
-        expect(createUserUseCaseStubSpy).toHaveBeenCalledWith({
-            name: 'any_name',
-            email: 'any_email@email.com',
-            password: 'any_password',
-            price_hour: 10.5,
-        })
+        expect(createUserUseCaseStubSpy).toHaveBeenCalledWith(fakeData().body)
     })
 
-    test('test return status 400 if email already exists', async () => {
+    test('test return status 400 if account with email already exist', async () => {
         const { sut, createUserUseCaseStub } = makeSut()
-
-        vi.spyOn(createUserUseCaseStub, 'execute').mockReturnValue(
-            new Promise((reject) =>
-                reject(
-                    new Error(
-                        'Account with this email already exists! Try with another email!'
-                    )
+        vi.spyOn(createUserUseCaseStub, 'execute').mockImplementation(
+            async () =>
+                new Promise<CreatedUser | UserExists>((resolve, reject) =>
+                    reject(new UserExists())
                 )
-            )
         )
 
         const httpResponse = await sut.handle(fakeData())
         expect(httpResponse.statusCode).toBe(400)
         expect(httpResponse.body).toEqual({
-            error: 'Account with this email already exists! Try with another email!',
+            message: new UserExists().message,
         })
     })
 
-    test('test return status 500 if create user case raise exception', async () => {
+    test('test return status 500 if createUserUseCase raise exception', async () => {
         const { sut, createUserUseCaseStub } = makeSut()
-        vi.spyOn(createUserUseCaseStub, 'execute').mockImplementation(
+        vi.spyOn(createUserUseCaseStub, 'execute').mockImplementationOnce(
             async () =>
-                new Promise<CreatedUser>((resolve, reject) =>
+                new Promise<CreatedUser | UserExists>((resolve, reject) =>
                     reject(new Error())
                 )
         )
@@ -94,7 +90,7 @@ describe('test SignupController', () => {
         expect(httpResponse.body).toEqual(new ServerError())
     })
 
-    test('test retun status 201 with correct values', async () => {
+    test('test return status 201 with correct values', async () => {
         const { sut } = makeSut()
         const httpResponse = await sut.handle(fakeData())
         expect(httpResponse.statusCode).toBe(201)

@@ -1,4 +1,5 @@
 import { badRequest, created, serverError } from '../../helpers/http/errors'
+import { UserExists } from '../../helpers/http/userExists'
 import { httpRequest, httpResponse } from '../../types/http'
 import { ICreateUser } from '../../useCases/user/createUser/ICreateUser'
 import { IController } from '../IController'
@@ -9,11 +10,12 @@ class SignupController implements IController {
     async handle(httpResquest: httpRequest): Promise<httpResponse> {
         try {
             const user = await this.createUserUseCase.execute(httpResquest.body)
-            if (user instanceof Error) {
-                return badRequest(user.message)
-            }
             return created(user)
         } catch (error) {
+            // console.log(error)
+            if (error instanceof UserExists) {
+                return badRequest(error.message)
+            }
             return serverError()
         }
     }
