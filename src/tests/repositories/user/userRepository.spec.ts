@@ -2,15 +2,11 @@ import { describe, test, expect, afterAll, vi } from 'vitest'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
 import { UserRepository } from '../../../repositories/user/userRepository'
 import { clientdB } from '../../../database/client'
-import { UserSchema } from '../../../types/user'
+import { CreateUserRepoDTO } from '../../../types/user'
 
 const client = clientdB
 
-afterAll(async () => {
-    await client.user.deleteMany({})
-})
-
-const fakeData = (): UserSchema => {
+const fakeData = (): CreateUserRepoDTO => {
     const addUser = {
         name: 'any_name',
         email: 'any_email@mail.com',
@@ -27,6 +23,10 @@ const makeSut = (): IUserRepository => {
 }
 
 describe('test user repository', () => {
+    afterAll(async () => {
+        await client.user.deleteMany({})
+    })
+
     test('test add user', async () => {
         const sut = makeSut()
         const user = await sut.create(fakeData())

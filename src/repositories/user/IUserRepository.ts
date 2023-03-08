@@ -1,7 +1,7 @@
-import { CreatedUser, UserSchema } from '../../types/user'
+import { CreatedUser, UserSchema, CreateUserRepoDTO } from '../../types/user'
 
 interface IUserRepository {
-    create(data: UserSchema): Promise<CreatedUser>
+    create(data: CreateUserRepoDTO): Promise<CreatedUser>
     getUserByEmail(email: string): Promise<CreatedUser | null>
 }
 

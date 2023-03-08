@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { UserSchema, CreatedUser } from '../../types/user'
+import { CreatedUser, CreateUserRepoDTO } from '../../types/user'
 import { IUserRepository } from './IUserRepository'
 
 class UserRepository implements IUserRepository {
@@ -12,7 +12,7 @@ class UserRepository implements IUserRepository {
         return user
     }
 
-    async create(data: UserSchema): Promise<CreatedUser> {
+    async create(data: CreateUserRepoDTO): Promise<CreatedUser> {
         const user = await this.client.user.create({ data })
         return user
     }
