@@ -7,6 +7,13 @@ type UserSchema = {
     updatedAt?: Date | null
 }
 
+type CreateUserUseCaseDTO = {
+    name: string
+    email: string
+    password: string
+    price_hour: number
+}
+
 type CreateUserRepoDTO = {
     name: string
     email: string
@@ -26,4 +33,4 @@ type CreatedUser = {
     updatedAt?: Date | null
 }
 
-export { UserSchema, CreatedUser, CreateUserRepoDTO }
+export { UserSchema, CreatedUser, CreateUserRepoDTO, CreateUserUseCaseDTO }

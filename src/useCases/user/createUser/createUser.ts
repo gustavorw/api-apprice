@@ -1,7 +1,12 @@
 import { IEncrypter } from '../../../helpers/encrypter/IEncrypter'
-import { UserSchema, CreatedUser } from '../../../types/user'
+import {
+    UserSchema,
+    CreatedUser,
+    CreateUserUseCaseDTO,
+} from '../../../types/user'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
 import { ICreateUser } from './ICreateUser'
+import { UserExists } from '../../../helpers/http/userExists'
 
 class CreateUserUseCase implements ICreateUser {
     constructor(
@@ -9,12 +14,12 @@ class CreateUserUseCase implements ICreateUser {
         private readonly encrypter: IEncrypter
     ) {}
 
-    async execute(data: UserSchema): Promise<CreatedUser | Error> {
+    async execute(
+        data: CreateUserUseCaseDTO
+    ): Promise<CreatedUser | UserExists> {
         const userExists = await this.userRepository.getUserByEmail(data.email)
         if (userExists) {
-            return new Error(
-                'Account with this email already exists! Try with another email!'
-            )
+            return new UserExists()
         }
         const hashPassword = await this.encrypter.hash(data.password)
         const newUser = await this.userRepository.create(
@@ -24,7 +29,9 @@ class CreateUserUseCase implements ICreateUser {
                 updatedAt: new Date(),
             })
         )
-        return newUser
+
+        const { password: _, ...user } = newUser
+        return user
     }
 }
 

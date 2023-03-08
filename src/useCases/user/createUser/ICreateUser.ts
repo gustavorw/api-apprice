@@ -1,7 +1,12 @@
-import { CreatedUser, UserSchema } from '../../../types/user'
+import { UserExists } from '../../../helpers/http/userExists'
+import {
+    CreateUserUseCaseDTO,
+    CreatedUser,
+    UserSchema,
+} from '../../../types/user'
 
 interface ICreateUser {
-    execute(data: UserSchema): Promise<CreatedUser | Error>
+    execute(data: CreateUserUseCaseDTO): Promise<CreatedUser | UserExists>
 }
 
 export { ICreateUser }
