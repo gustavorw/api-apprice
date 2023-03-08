@@ -16,8 +16,8 @@ model User {
   email      String    @unique
   price_hour Float     @default(0.0)
   password   String
-  createdAt  DateTime?
-  updatedAt  DateTime?
+  createdAt  DateTime
+  updatedAt  DateTime
   project    Project[]
 
   @@map("users")
@@ -29,8 +29,8 @@ model Project {
   client      String
   description String
   cost        Float       @default(0.0)
-  createdAt   DateTime? 
-  updatedAt   DateTime?
+  createdAt   DateTime 
+  updatedAt   DateTime
   user        User        @relation(fields: [userId], references: [id])
   userId      Int
   expense     Expense[]
@@ -43,7 +43,7 @@ model Expense {
   id        Int      @id @default(autoincrement())
   name      String
   cost      Float    @default(0.0)
-  createdAt  DateTime?
+  createdAt  DateTime
   project   Project  @relation(fields: [projectId], references: [id])
   projectId Int
 
@@ -54,7 +54,7 @@ model UserStore {
   id         Int      @id @default(autoincrement())
   name       String
   decription String
-  createdAt  DateTime?
+  createdAt  DateTime
   project    Project  @relation(fields: [projectId], references: [id])
   projectId  Int
   task       Task[]
@@ -69,9 +69,9 @@ model Task {
   completed   Boolean    @default(false)
   duration    Int
   complexity  String
-  createdAt   DateTime?
-  updatedAt   DateTime?
-  userStore   UserStore? @relation(fields: [userStoreId], references: [id])
+  createdAt   DateTime
+  updatedAt   DateTime
+  userStore   UserStore @relation(fields: [userStoreId], references: [id])
   userStoreId Int
 
   @@map("tasks")
