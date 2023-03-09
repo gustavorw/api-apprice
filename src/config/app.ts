@@ -1,3 +1,10 @@
-import Express from 'express'
+import express from 'express'
+import { setupMiddlewares } from './middlewares'
 
-export const app = Express()
+const app = express()
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+setupMiddlewares(app)
+
+export { app }
