@@ -10,12 +10,13 @@ class SignupController implements IController {
     async handle(httpResquest: httpRequest): Promise<httpResponse> {
         try {
             const user = await this.createUserUseCase.execute(httpResquest.body)
+            if (user instanceof UserExists) {
+                console.log(user.message)
+                return badRequest(user.message)
+            }
             return created(user)
         } catch (error) {
             // console.log(error)
-            if (error instanceof UserExists) {
-                return badRequest(error.message)
-            }
             return serverError()
         }
     }

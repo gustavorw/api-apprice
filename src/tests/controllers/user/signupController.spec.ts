@@ -33,8 +33,8 @@ const makeCreateUserUseCase = (): ICreateUser => {
                 name: 'any_name',
                 email: 'any_email@email.com',
                 price_hour: 10.5,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                createdAt: new Date('2023-03-08T09:00'),
+                updatedAt: new Date('2023-03-08T09:00'),
             }
             return new Promise((resolve) => resolve(fakeAccount))
         }
@@ -60,13 +60,12 @@ describe('test SignupController', () => {
         expect(createUserUseCaseStubSpy).toHaveBeenCalledWith(fakeData().body)
     })
 
-    test('test return status 400 if account with email already exist', async () => {
+    test('test return status 400 if account email already exist', async () => {
         const { sut, createUserUseCaseStub } = makeSut()
-        vi.spyOn(createUserUseCaseStub, 'execute').mockImplementation(
-            async () =>
-                new Promise<CreatedUser | UserExists>((resolve, reject) =>
-                    reject(new UserExists())
-                )
+        vi.spyOn(createUserUseCaseStub, 'execute').mockReturnValue(
+            new Promise<CreatedUser | UserExists>((resolve) =>
+                resolve(new UserExists())
+            )
         )
 
         const httpResponse = await sut.handle(fakeData())
@@ -99,8 +98,8 @@ describe('test SignupController', () => {
             name: 'any_name',
             email: 'any_email@email.com',
             price_hour: 10.5,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: new Date('2023-03-08T09:00'),
+            updatedAt: new Date('2023-03-08T09:00'),
         })
     })
 })
