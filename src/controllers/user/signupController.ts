@@ -11,7 +11,6 @@ class SignupController implements IController {
         try {
             const user = await this.createUserUseCase.execute(httpResquest.body)
             if (user instanceof UserExists) {
-                console.log(user.message)
                 return badRequest(user.message)
             }
             return created(user)

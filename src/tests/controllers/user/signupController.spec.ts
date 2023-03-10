@@ -1,11 +1,7 @@
 import { describe, expect, test, vi } from 'vitest'
 import { SignupController } from '../../../controllers/user/signupController'
 import { ICreateUser } from '../../../useCases/user/createUser/ICreateUser'
-import {
-    UserSchema,
-    CreatedUser,
-    CreateUserUseCaseDTO,
-} from '../../../types/user'
+import { CreatedUser, CreateUserUseCaseDTO } from '../../../types/user'
 import { IController } from '../../../controllers/IController'
 import { httpRequest } from '../../../types/http'
 import { ServerError } from '../../../helpers/http/serverError'

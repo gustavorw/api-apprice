@@ -1,9 +1,5 @@
 import { IEncrypter } from '../../../helpers/encrypter/IEncrypter'
-import {
-    UserSchema,
-    CreatedUser,
-    CreateUserUseCaseDTO,
-} from '../../../types/user'
+import { CreatedUser, CreateUserUseCaseDTO } from '../../../types/user'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
 import { ICreateUser } from './ICreateUser'
 import { UserExists } from '../../../helpers/http/userExists'

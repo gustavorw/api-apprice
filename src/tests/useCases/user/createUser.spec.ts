@@ -1,10 +1,10 @@
 import { describe, expect, test, vi } from 'vitest'
-import { IEncrypter } from '../../helpers/encrypter/IEncrypter'
-import { UserSchema, CreatedUser, CreateUserRepoDTO } from '../../types/user'
-import { IUserRepository } from '../../repositories/user/IUserRepository'
-import { ICreateUser } from '../../useCases/user/createUser/ICreateUser'
-import { CreateUserUseCase } from '../../useCases/user/createUser/createUser'
-import { UserExists } from '../../helpers/http/userExists'
+import { IEncrypter } from '../../../helpers/encrypter/IEncrypter'
+import { CreatedUser, CreateUserRepoDTO } from '../../../types/user'
+import { IUserRepository } from '../../../repositories/user/IUserRepository'
+import { ICreateUser } from '../../../useCases/user/createUser/ICreateUser'
+import { CreateUserUseCase } from '../../../useCases/user/createUser/createUser'
+import { UserExists } from '../../../helpers/http/userExists'
 
 interface sutTypes {
     sut: ICreateUser
@@ -31,9 +31,10 @@ const makeUserRepository = (): IUserRepository => {
                 id: 1,
                 name: 'any_name',
                 email: 'any_email@email.com',
+                password: 'hash_password',
                 price_hour: 10.5,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                createdAt: new Date('2023-03-08T09:00'),
+                updatedAt: new Date('2023-03-08T09:00'),
             }
             return new Promise((resolve) => resolve(fake))
         }
@@ -41,14 +42,12 @@ const makeUserRepository = (): IUserRepository => {
     return new UserRepositoryStub()
 }
 
-const dataInput = (): CreateUserRepoDTO[] => [
+const dataInput = (): any[] => [
     {
         name: 'any_name',
         email: 'any_email@email.com',
         password: 'any_password',
         price_hour: 10.5,
-        createdAt: new Date(),
-        updatedAt: new Date(),
     },
     {
         name: 'any_name',
@@ -93,8 +92,8 @@ describe('test create user use case', () => {
                     name: 'any_name',
                     email: 'any_email@email.com',
                     price_hour: 10.5,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
+                    createdAt: new Date('2023-03-08T09:00'),
+                    updatedAt: new Date('2023-03-08T09:00'),
                 })
             )
         )
@@ -130,8 +129,8 @@ describe('test create user use case', () => {
             name: 'any_name',
             email: 'any_email@email.com',
             price_hour: 10.5,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: new Date('2023-03-08T09:00'),
+            updatedAt: new Date('2023-03-08T09:00'),
         })
     })
 })

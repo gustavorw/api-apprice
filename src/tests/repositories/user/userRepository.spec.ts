@@ -1,4 +1,4 @@
-import { describe, test, expect, afterAll, vi } from 'vitest'
+import { describe, test, expect, afterAll } from 'vitest'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
 import { UserRepository } from '../../../repositories/user/userRepository'
 import { clientdB } from '../../../database/client'
@@ -12,8 +12,8 @@ const fakeData = (): CreateUserRepoDTO => {
         email: 'any_email@mail.com',
         password: 'any_password',
         price_hour: 10.5,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date('2023-03-08T09:00'),
+        updatedAt: new Date('2023-03-08T09:00'),
     }
     return addUser
 }

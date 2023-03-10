@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, afterEach, afterAll } from 'vitest'
+import { describe, test, expect, vi, afterAll } from 'vitest'
 import { Encrypter } from '../../helpers/encrypter/encrypterAdapter'
 import bcrypt from 'bcryptjs'
 
