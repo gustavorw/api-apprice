@@ -11,7 +11,7 @@ describe('create user middleware', () => {
         const sut = makeSut()
         const data = {
             body: {
-                username: 'victor',
+                name: 'victor',
                 email: 'victor@email.to',
                 password: 'teste123',
                 price_hour: 10,
@@ -19,5 +19,20 @@ describe('create user middleware', () => {
         }
         const result = await sut.verifyData(data)
         expect(result).toBeTruthy()
+    })
+
+    test('test return error message of parse data schema', async () => {
+        const sut = makeSut()
+        const data = {
+            body: {
+                name: '',
+                email: 'victor@email.to',
+                password: 'teste123',
+                price_hour: 10,
+            },
+        }
+        const result = await sut.verifyData(data)
+        expect(result).toBeTypeOf('string')
+        expect(result).toBe("Name can't be empty!")
     })
 })

@@ -7,10 +7,10 @@ class CreateUserMiddleware implements IMiddleware {
         const userSchema = z.object({
             name: z
                 .string({
-                    invalid_type_error: 'Username must be a string!',
-                    required_error: 'Username is required!',
+                    invalid_type_error: 'Name must be a string!',
+                    required_error: 'Name is required!',
                 })
-                .nonempty("Username can't be empty!"),
+                .nonempty("Name can't be empty!"),
             email: z
                 .string({
                     invalid_type_error: 'Email must be a string!',
