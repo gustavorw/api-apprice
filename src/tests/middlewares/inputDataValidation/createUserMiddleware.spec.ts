@@ -50,4 +50,19 @@ describe('create user middleware', () => {
         expect(result).toBeTypeOf('string')
         expect(result).toBe('Invalid email address!')
     })
+
+    test('test return error message of password parse data schema', async () => {
+        const sut = makeSut()
+        const data = {
+            body: {
+                name: 'victor',
+                email: 'victor@email.to',
+                password: 'teste',
+                price_hour: 10,
+            },
+        }
+        const result = await sut.verifyData(data)
+        expect(result).toBeTypeOf('string')
+        expect(result).toBe('Password must be 8 or more characters long!')
+    })
 })
