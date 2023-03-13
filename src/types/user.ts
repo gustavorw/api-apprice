@@ -2,14 +2,14 @@ type CreateUserUseCaseDTO = {
     name: string
     email: string
     password: string
-    price_hour: number
+    price_hour?: number | undefined
 }
 
 type CreateUserRepoDTO = {
     name: string
     email: string
     password: string
-    price_hour: number
+    price_hour?: number | undefined
     createdAt: Date
     updatedAt: Date
 }
