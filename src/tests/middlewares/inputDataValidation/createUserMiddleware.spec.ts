@@ -21,7 +21,7 @@ describe('create user middleware', () => {
         expect(result).toBeTruthy()
     })
 
-    test('test return error message of parse data schema', async () => {
+    test('test return error message of name parse data schema', async () => {
         const sut = makeSut()
         const data = {
             body: {
@@ -34,5 +34,20 @@ describe('create user middleware', () => {
         const result = await sut.verifyData(data)
         expect(result).toBeTypeOf('string')
         expect(result).toBe("Name can't be empty!")
+    })
+
+    test('test return error message of email parse data schema', async () => {
+        const sut = makeSut()
+        const data = {
+            body: {
+                name: 'victor',
+                email: 'victor',
+                password: 'teste123',
+                // price_hour: 10,
+            },
+        }
+        const result = await sut.verifyData(data)
+        expect(result).toBeTypeOf('string')
+        expect(result).toBe('Invalid email address!')
     })
 })
