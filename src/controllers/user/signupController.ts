@@ -1,11 +1,18 @@
 import { badRequest, created, serverError } from '../../helpers/http/errors'
 import { UserExists } from '../../helpers/http/userExists'
 import { httpRequest, httpResponse } from '../../types/http'
-import { ICreateUser } from '../../useCases/user/createUser/ICreateUser'
+import { CreateUserRepoDTO, CreatedUser } from '../../types/user'
+import { IUseCase } from '../../useCases/IUseCase'
 import { IController } from '../IController'
 
 class SignupController implements IController {
-    constructor(private readonly createUserUseCase: ICreateUser) {}
+    constructor(
+        private readonly createUserUseCase: IUseCase<
+            CreateUserRepoDTO,
+            CreatedUser,
+            UserExists
+        >
+    ) {}
 
     async handle(httpResquest: httpRequest): Promise<httpResponse> {
         try {

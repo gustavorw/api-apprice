@@ -1,10 +1,12 @@
 import { IEncrypter } from '../../../helpers/encrypter/IEncrypter'
 import { CreatedUser, CreateUserUseCaseDTO } from '../../../types/user'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
-import { ICreateUser } from './ICreateUser'
+import { IUseCase } from '../../IUseCase'
 import { UserExists } from '../../../helpers/http/userExists'
 
-class CreateUserUseCase implements ICreateUser {
+class CreateUserUseCase
+    implements IUseCase<CreateUserUseCaseDTO, CreatedUser, UserExists>
+{
     constructor(
         private readonly userRepository: IUserRepository,
         private readonly encrypter: IEncrypter

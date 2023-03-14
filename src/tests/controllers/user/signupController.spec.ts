@@ -1,7 +1,11 @@
 import { describe, expect, test, vi } from 'vitest'
 import { SignupController } from '../../../controllers/user/signupController'
-import { ICreateUser } from '../../../useCases/user/createUser/ICreateUser'
-import { CreatedUser, CreateUserUseCaseDTO } from '../../../types/user'
+import { IUseCase } from '../../../useCases/IUseCase'
+import {
+    CreatedUser,
+    CreateUserRepoDTO,
+    CreateUserUseCaseDTO,
+} from '../../../types/user'
 import { IController } from '../../../controllers/IController'
 import { httpRequest } from '../../../types/http'
 import { ServerError } from '../../../helpers/http/serverError'
@@ -9,7 +13,7 @@ import { UserExists } from '../../../helpers/http/userExists'
 
 type SutTypes = {
     sut: IController
-    createUserUseCaseStub: ICreateUser
+    createUserUseCaseStub: IUseCase<CreateUserRepoDTO, CreatedUser, UserExists>
 }
 
 const fakeData = (): httpRequest => ({
@@ -21,8 +25,14 @@ const fakeData = (): httpRequest => ({
     },
 })
 
-const makeCreateUserUseCase = (): ICreateUser => {
-    class CreateUserUseCaseStub implements ICreateUser {
+const makeCreateUserUseCase = (): IUseCase<
+    CreateUserRepoDTO,
+    CreatedUser,
+    UserExists
+> => {
+    class CreateUserUseCaseStub
+        implements IUseCase<CreateUserRepoDTO, CreatedUser, UserExists>
+    {
         execute(data: CreateUserUseCaseDTO): Promise<CreatedUser | UserExists> {
             const fakeAccount = {
                 id: 1,

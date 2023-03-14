@@ -2,12 +2,12 @@ import { describe, expect, test, vi } from 'vitest'
 import { IEncrypter } from '../../../helpers/encrypter/IEncrypter'
 import { CreatedUser, CreateUserRepoDTO } from '../../../types/user'
 import { IUserRepository } from '../../../repositories/user/IUserRepository'
-import { ICreateUser } from '../../../useCases/user/createUser/ICreateUser'
+import { IUseCase } from '../../../useCases/IUseCase'
 import { CreateUserUseCase } from '../../../useCases/user/createUser/createUser'
 import { UserExists } from '../../../helpers/http/userExists'
 
 interface sutTypes {
-    sut: ICreateUser
+    sut: IUseCase<CreateUserRepoDTO, CreatedUser, UserExists>
     encrypterStub: IEncrypter
     userRepositoryStub: IUserRepository
 }
