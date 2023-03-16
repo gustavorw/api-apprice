@@ -6,7 +6,9 @@
     "scripts": {
         "start:dev": "tsx watch src/server.ts",
         "test": "vitest",
-        "test:cov": "vitest run --coverage"
+        "test:cov": "vitest run --coverage",
+        "prisma:migratedev": "npx prisma migrate dev",
+        "prisma:generate": "npx prisma generate"
     },
     "repository": {
         "type": "git",
