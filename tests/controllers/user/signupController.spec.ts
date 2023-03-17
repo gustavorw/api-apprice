@@ -8,8 +8,12 @@ import {
 } from '../../../src/types/user'
 import { IController } from '../../../src/controllers/IController'
 import { httpRequest } from '../../../src/types/http'
-import { ServerError } from '../../../src/helpers/http/serverError'
 import { UserExists } from '../../../src/helpers/http/userExists'
+import {
+    badRequest,
+    created,
+    serverError,
+} from '../../../src/helpers/http/errors'
 
 type SutTypes = {
     sut: IController
@@ -25,6 +29,15 @@ const fakeData = (): httpRequest => ({
     },
 })
 
+const returnData = (): CreatedUser => ({
+    id: 1,
+    name: 'any_name',
+    email: 'any_email@email.com',
+    price_hour: 10.5,
+    createdAt: new Date('2023-03-08T09:00'),
+    updatedAt: new Date('2023-03-08T09:00'),
+})
+
 const makeCreateUserUseCase = (): IUseCase<
     CreateUserRepoDTO,
     CreatedUser,
@@ -34,15 +47,7 @@ const makeCreateUserUseCase = (): IUseCase<
         implements IUseCase<CreateUserRepoDTO, CreatedUser, UserExists>
     {
         execute(data: CreateUserUseCaseDTO): Promise<CreatedUser | UserExists> {
-            const fakeAccount = {
-                id: 1,
-                name: 'any_name',
-                email: 'any_email@email.com',
-                price_hour: 10.5,
-                createdAt: new Date('2023-03-08T09:00'),
-                updatedAt: new Date('2023-03-08T09:00'),
-            }
-            return new Promise((resolve) => resolve(fakeAccount))
+            return new Promise((resolve) => resolve(returnData()))
         }
     }
     return new CreateUserUseCaseStub()
@@ -66,7 +71,7 @@ describe('test SignupController', () => {
         expect(createUserUseCaseStubSpy).toHaveBeenCalledWith(fakeData().body)
     })
 
-    test('test return status 400 if account email already exist', async () => {
+    test('test return status 400 if an account with email already exist', async () => {
         const { sut, createUserUseCaseStub } = makeSut()
         vi.spyOn(createUserUseCaseStub, 'execute').mockReturnValue(
             new Promise<CreatedUser | UserExists>((resolve) =>
@@ -76,9 +81,9 @@ describe('test SignupController', () => {
 
         const httpResponse = await sut.handle(fakeData())
         expect(httpResponse.statusCode).toBe(400)
-        expect(httpResponse.body).toEqual({
-            message: new UserExists().message,
-        })
+        expect(httpResponse.body).toEqual(
+            badRequest(new UserExists().message).body
+        )
     })
 
     test('test return status 500 if createUserUseCase raise exception', async () => {
@@ -92,20 +97,13 @@ describe('test SignupController', () => {
 
         const httpResponse = await sut.handle(fakeData())
         expect(httpResponse.statusCode).toBe(500)
-        expect(httpResponse.body).toEqual(new ServerError())
+        expect(httpResponse.body).toEqual(serverError().body)
     })
 
     test('test return status 201 with correct values', async () => {
         const { sut } = makeSut()
         const httpResponse = await sut.handle(fakeData())
         expect(httpResponse.statusCode).toBe(201)
-        expect(httpResponse.body).toEqual({
-            id: 1,
-            name: 'any_name',
-            email: 'any_email@email.com',
-            price_hour: 10.5,
-            createdAt: new Date('2023-03-08T09:00'),
-            updatedAt: new Date('2023-03-08T09:00'),
-        })
+        expect(httpResponse.body).toEqual(created(returnData()).body)
     })
 })
