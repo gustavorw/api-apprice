@@ -1,7 +1,7 @@
-import { IEncrypter } from './IEncrypter'
+import { IHash } from './interfaces/IHash'
 import bcrypt from 'bcryptjs'
 
-class Encrypter implements IEncrypter {
+class Hasher implements IHash {
     constructor(private readonly salt: number) {}
 
     async hash(password: string): Promise<String> {
@@ -10,4 +10,4 @@ class Encrypter implements IEncrypter {
     }
 }
 
-export { Encrypter }
+export { Hasher }

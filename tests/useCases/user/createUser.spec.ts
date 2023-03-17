@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
-import { IEncrypter } from '../../../src/helpers/encrypter/IEncrypter'
+import { IHash } from '../../../src/helpers/hash/interfaces/IHash'
 import { CreatedUser, CreateUserRepoDTO } from '../../../src/types/user'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { CreateUserUseCase } from '../../../src/useCases/user/createUser/createUser'
@@ -9,18 +9,18 @@ import { IGetUserEmailRepository } from '../../../src/repositories/user/inteface
 
 interface sutTypes {
     sut: IUseCase<CreateUserRepoDTO, CreatedUser, UserExists>
-    encrypterStub: IEncrypter
+    hasherStub: IHash
     addUserRepositoryStub: IAddUserRepository
     getUserEmailRepositoryStub: IGetUserEmailRepository
 }
 
-const makeEncrypter = (): IEncrypter => {
-    class EncrypterStub implements IEncrypter {
+const makeHasher = (): IHash => {
+    class hasherStub implements IHash {
         async hash(password: string): Promise<String> {
             return new Promise((resolve) => resolve('hash_password'))
         }
     }
-    return new EncrypterStub()
+    return new hasherStub()
 }
 
 const makeGetUserEmailRepository = (): IGetUserEmailRepository => {
@@ -69,17 +69,17 @@ const dataInput = (): any[] => [
 
 const makeSut = (): sutTypes => {
     const addUserRepositoryStub = makeAddUserRepository()
-    const encrypterStub = makeEncrypter()
+    const hasherStub = makeHasher()
     const getUserEmailRepositoryStub = makeGetUserEmailRepository()
     const sut = new CreateUserUseCase(
         addUserRepositoryStub,
         getUserEmailRepositoryStub,
-        encrypterStub
+        hasherStub
     )
 
     return {
         sut,
-        encrypterStub,
+        hasherStub,
         getUserEmailRepositoryStub,
         addUserRepositoryStub,
     }
@@ -121,9 +121,9 @@ describe('test createUserUseCase', () => {
     })
 
     test('test call hash password method', async () => {
-        const { sut, encrypterStub } = makeSut()
+        const { sut, hasherStub } = makeSut()
 
-        const encrypterSpy = vi.spyOn(encrypterStub, 'hash')
+        const encrypterSpy = vi.spyOn(hasherStub, 'hash')
 
         await sut.execute(dataInput()[0])
         expect(encrypterSpy).toHaveBeenCalledWith('any_password')

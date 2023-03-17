@@ -1,5 +1,5 @@
-interface IEncrypter {
+interface IHash {
     hash(password: string): Promise<String>
 }
 
-export { IEncrypter }
+export { IHash }

@@ -1,4 +1,4 @@
-import { IEncrypter } from '../../../helpers/encrypter/IEncrypter'
+import { IHash } from '../../../helpers/hash/interfaces/IHash'
 import { CreatedUser, CreateUserUseCaseDTO } from '../../../types/user'
 import { IUseCase } from '../../IUseCase'
 import { UserExists } from '../../../helpers/http/userExists'
@@ -11,7 +11,7 @@ class CreateUserUseCase
     constructor(
         private readonly userRepository: IAddUserRepository,
         private readonly getUserEmailRepository: IGetUserEmailRepository,
-        private readonly encrypter: IEncrypter
+        private readonly hasher: IHash
     ) {}
 
     async execute(
@@ -23,7 +23,7 @@ class CreateUserUseCase
         if (userExists) {
             return new UserExists()
         }
-        const hashPassword = await this.encrypter.hash(data.password)
+        const hashPassword = await this.hasher.hash(data.password)
         const newUser = await this.userRepository.add(
             Object.assign({}, data, {
                 password: hashPassword,
