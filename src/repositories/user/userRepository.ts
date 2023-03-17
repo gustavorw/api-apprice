@@ -1,8 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import { CreatedUser, CreateUserRepoDTO } from '../../types/user'
 import { IAddUserRepository } from './intefaces/IAddUserRepository'
+import { IGetUserEmailRepository } from './intefaces/IGetUserEmailRepository'
 
-class UserRepository implements IAddUserRepository {
+class UserRepository implements IAddUserRepository, IGetUserEmailRepository {
     constructor(private readonly client: PrismaClient) {}
 
     async getUserByEmail(email: string): Promise<CreatedUser | null> {
@@ -12,7 +13,7 @@ class UserRepository implements IAddUserRepository {
         return user
     }
 
-    async create(data: CreateUserRepoDTO): Promise<CreatedUser> {
+    async add(data: CreateUserRepoDTO): Promise<CreatedUser> {
         const user = await this.client.user.create({ data })
         return user
     }

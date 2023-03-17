@@ -5,11 +5,13 @@ import { IUseCase } from '../../../src/useCases/IUseCase'
 import { CreateUserUseCase } from '../../../src/useCases/user/createUser/createUser'
 import { UserExists } from '../../../src/helpers/http/userExists'
 import { IAddUserRepository } from '../../../src/repositories/user/intefaces/IAddUserRepository'
+import { IGetUserEmailRepository } from '../../../src/repositories/user/intefaces/IGetUserEmailRepository'
 
 interface sutTypes {
     sut: IUseCase<CreateUserRepoDTO, CreatedUser, UserExists>
     encrypterStub: IEncrypter
-    userRepositoryStub: IAddUserRepository
+    addUserRepositoryStub: IAddUserRepository
+    getUserEmailRepositoryStub: IGetUserEmailRepository
 }
 
 const makeEncrypter = (): IEncrypter => {
@@ -21,12 +23,18 @@ const makeEncrypter = (): IEncrypter => {
     return new EncrypterStub()
 }
 
-const makeUserRepository = (): IAddUserRepository => {
-    class UserRepositoryStub implements IAddUserRepository {
-        async getUserByEmail(email: string): Promise<CreatedUser | null> {
+const makeGetUserEmailRepository = (): IGetUserEmailRepository => {
+    class GetUserEmailRepositoryStub implements IGetUserEmailRepository {
+        getUserByEmail(email: string): Promise<CreatedUser | null> {
             return new Promise((resolve) => resolve(null))
         }
-        async create(data: CreateUserRepoDTO): Promise<CreatedUser> {
+    }
+    return new GetUserEmailRepositoryStub()
+}
+
+const makeAddUserRepository = (): IAddUserRepository => {
+    class AddUserRepositoryStub implements IAddUserRepository {
+        async add(data: CreateUserRepoDTO): Promise<CreatedUser> {
             const fake = {
                 id: 1,
                 name: 'any_name',
@@ -39,7 +47,7 @@ const makeUserRepository = (): IAddUserRepository => {
             return new Promise((resolve) => resolve(fake))
         }
     }
-    return new UserRepositoryStub()
+    return new AddUserRepositoryStub()
 }
 
 const dataInput = (): any[] => [
@@ -60,32 +68,42 @@ const dataInput = (): any[] => [
 ]
 
 const makeSut = (): sutTypes => {
-    const userRepositoryStub = makeUserRepository()
+    const addUserRepositoryStub = makeAddUserRepository()
     const encrypterStub = makeEncrypter()
-    const sut = new CreateUserUseCase(userRepositoryStub, encrypterStub)
+    const getUserEmailRepositoryStub = makeGetUserEmailRepository()
+    const sut = new CreateUserUseCase(
+        addUserRepositoryStub,
+        getUserEmailRepositoryStub,
+        encrypterStub
+    )
 
-    return { sut, encrypterStub, userRepositoryStub }
+    return {
+        sut,
+        encrypterStub,
+        getUserEmailRepositoryStub,
+        addUserRepositoryStub,
+    }
 }
 
-describe('test create user use case', () => {
+describe('test createUserUseCase', () => {
     test('test call getUserByEmail method to verify user exist', async () => {
-        const { sut, userRepositoryStub } = makeSut()
+        const { sut, getUserEmailRepositoryStub } = makeSut()
 
         const userRepositoryStubSpy = vi.spyOn(
-            userRepositoryStub,
+            getUserEmailRepositoryStub,
             'getUserByEmail'
         )
 
         await sut.execute(dataInput()[0])
         expect(userRepositoryStubSpy).toHaveBeenCalledWith(
-            'any_email@email.com'
+            dataInput()[0]['email']
         )
     })
 
     test('test return error if user exist', async () => {
-        const { sut, userRepositoryStub } = makeSut()
+        const { sut, getUserEmailRepositoryStub } = makeSut()
 
-        vi.spyOn(userRepositoryStub, 'getUserByEmail').mockReturnValue(
+        vi.spyOn(getUserEmailRepositoryStub, 'getUserByEmail').mockReturnValue(
             new Promise((resolve) =>
                 resolve({
                     id: 1,
@@ -111,13 +129,13 @@ describe('test create user use case', () => {
         expect(encrypterSpy).toHaveBeenCalledWith('any_password')
     })
 
-    test('test call create method of user repository', async () => {
-        const { sut, userRepositoryStub } = makeSut()
+    test('test call add method of addUserRepository', async () => {
+        const { sut, addUserRepositoryStub } = makeSut()
 
-        const userRepositoryStubSpy = vi.spyOn(userRepositoryStub, 'create')
+        const addUserRepositoryStubSpy = vi.spyOn(addUserRepositoryStub, 'add')
 
         await sut.execute(dataInput()[1])
-        expect(userRepositoryStubSpy).toHaveBeenCalledWith(dataInput()[1])
+        expect(addUserRepositoryStubSpy).toHaveBeenCalledWith(dataInput()[1])
     })
 
     test('test return success create user', async () => {
