@@ -3,6 +3,8 @@ import { IGetUserEmailRepository } from '../../../src/repositories/user/inteface
 import { CreatedUser } from '../../../src/types/user'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { LoginUserUseCase } from '../../../src/useCases/user/loginUser'
+import { resolve } from 'path'
+import { AuthenticationError } from '../../../src/helpers/http/errors/authenticationError'
 
 type SutTypes = {
     sut: IUseCase<any, any, any>
@@ -43,6 +45,30 @@ const makeSut = (): SutTypes => {
 
 describe('Test LoginUserUseCase', () => {
     test('test call getUserByEmail with correct values', async () => {
+        const { sut, getUserEmailRepositoryStub } = makeSut()
+        const getUserEmailRepositoryStubSpy = vi.spyOn(
+            getUserEmailRepositoryStub,
+            'getUserByEmail'
+        )
+        await sut.execute(fakeDataInput()[0])
+        expect(getUserEmailRepositoryStubSpy).toHaveBeenCalledWith(
+            fakeDataInput()[0]['email']
+        )
+    })
+
+    test('test return authentication error if user not exists', async () => {
+        const { sut, getUserEmailRepositoryStub } = makeSut()
+        vi.spyOn(getUserEmailRepositoryStub, 'getUserByEmail').mockReturnValue(
+            new Promise((resolve) => resolve(null))
+        )
+
+        const user = await sut.execute(fakeDataInput()[0])
+        expect(user).toEqual(
+            new AuthenticationError('User do not exists with this email.')
+        )
+    })
+
+    test('test call compare with correct values', async () => {
         const { sut, getUserEmailRepositoryStub } = makeSut()
         const getUserEmailRepositoryStubSpy = vi.spyOn(
             getUserEmailRepositoryStub,

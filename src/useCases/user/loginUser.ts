@@ -11,7 +11,12 @@ class LoginUserUseCase
     ) {}
 
     async execute(data: LoginUserDTO): Promise<string | AuthenticationError> {
-        await this.getUserMailRepository.getUserByEmail(data.email)
+        const user = await this.getUserMailRepository.getUserByEmail(data.email)
+        if (!user) {
+            return new AuthenticationError(
+                'User do not exists with this email.'
+            )
+        }
         return ''
     }
 }
