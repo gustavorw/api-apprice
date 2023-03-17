@@ -75,9 +75,7 @@ describe('Test LoginUserUseCase', () => {
         )
 
         const user = await sut.execute(fakeDataInput())
-        expect(user).toEqual(
-            new AuthenticationError('User do not exists with this email.')
-        )
+        expect(user).toEqual(new AuthenticationError('Wrong email.'))
     })
 
     test('test call compare with correct values', async () => {
@@ -88,5 +86,15 @@ describe('Test LoginUserUseCase', () => {
             fakeDataInput().password,
             'hash_password'
         )
+    })
+
+    test('test return authentication error if hashCompare return false', async () => {
+        const { sut, hashCompareStub } = makeSut()
+        vi.spyOn(hashCompareStub, 'compare').mockReturnValue(
+            new Promise((resolve) => resolve(false))
+        )
+
+        const user = await sut.execute(fakeDataInput())
+        expect(user).toEqual(new AuthenticationError('Wrong Password.'))
     })
 })
