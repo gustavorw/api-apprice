@@ -1,22 +1,21 @@
 import { describe, expect, test, vi } from 'vitest'
 import { IGetUserEmailRepository } from '../../../src/repositories/user/intefaces/IGetUserEmailRepository'
-import { CreatedUser } from '../../../src/types/user'
+import { CreatedUser, LoginUserDTO } from '../../../src/types/user'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { LoginUserUseCase } from '../../../src/useCases/user/loginUser'
-import { resolve } from 'path'
 import { AuthenticationError } from '../../../src/helpers/http/errors/authenticationError'
+import { IHashCompare } from '../../../src/helpers/hash/interfaces/ICompare'
 
 type SutTypes = {
     sut: IUseCase<any, any, any>
     getUserEmailRepositoryStub: IGetUserEmailRepository
+    hashCompareStub: IHashCompare
 }
 
-const fakeDataInput = (): any[] => [
-    {
-        email: 'any_email@email.com',
-        password: 'any_password',
-    },
-]
+const fakeDataInput = (): LoginUserDTO => ({
+    email: 'any_email@email.com',
+    password: 'any_password',
+})
 
 const fakeDataReturn = (): CreatedUser => ({
     id: 1,
@@ -28,9 +27,18 @@ const fakeDataReturn = (): CreatedUser => ({
     updatedAt: new Date('2023-03-08T09:00'),
 })
 
+const makeHashCompare = (): IHashCompare => {
+    class HashCompareStub implements IHashCompare {
+        async compare(value: string, hash: string): Promise<boolean> {
+            return new Promise((resolve) => resolve(true))
+        }
+    }
+    return new HashCompareStub()
+}
+
 const makeGetUserEmailRepository = (): IGetUserEmailRepository => {
     class GetUserEmailRepositoryStub implements IGetUserEmailRepository {
-        getUserByEmail(email: string): Promise<CreatedUser | null> {
+        async getUserByEmail(email: string): Promise<CreatedUser | null> {
             return new Promise((resolve) => resolve(fakeDataReturn()))
         }
     }
@@ -39,8 +47,12 @@ const makeGetUserEmailRepository = (): IGetUserEmailRepository => {
 
 const makeSut = (): SutTypes => {
     const getUserEmailRepositoryStub = makeGetUserEmailRepository()
-    const sut = new LoginUserUseCase(getUserEmailRepositoryStub)
-    return { sut, getUserEmailRepositoryStub }
+    const hashCompareStub = makeHashCompare()
+    const sut = new LoginUserUseCase(
+        getUserEmailRepositoryStub,
+        hashCompareStub
+    )
+    return { sut, getUserEmailRepositoryStub, hashCompareStub }
 }
 
 describe('Test LoginUserUseCase', () => {
@@ -50,9 +62,9 @@ describe('Test LoginUserUseCase', () => {
             getUserEmailRepositoryStub,
             'getUserByEmail'
         )
-        await sut.execute(fakeDataInput()[0])
+        await sut.execute(fakeDataInput())
         expect(getUserEmailRepositoryStubSpy).toHaveBeenCalledWith(
-            fakeDataInput()[0]['email']
+            fakeDataInput().email
         )
     })
 
@@ -62,21 +74,19 @@ describe('Test LoginUserUseCase', () => {
             new Promise((resolve) => resolve(null))
         )
 
-        const user = await sut.execute(fakeDataInput()[0])
+        const user = await sut.execute(fakeDataInput())
         expect(user).toEqual(
             new AuthenticationError('User do not exists with this email.')
         )
     })
 
     test('test call compare with correct values', async () => {
-        const { sut, getUserEmailRepositoryStub } = makeSut()
-        const getUserEmailRepositoryStubSpy = vi.spyOn(
-            getUserEmailRepositoryStub,
-            'getUserByEmail'
-        )
-        await sut.execute(fakeDataInput()[0])
-        expect(getUserEmailRepositoryStubSpy).toHaveBeenCalledWith(
-            fakeDataInput()[0]['email']
+        const { sut, hashCompareStub } = makeSut()
+        const hashCompareStubSpy = vi.spyOn(hashCompareStub, 'compare')
+        await sut.execute(fakeDataInput())
+        expect(hashCompareStubSpy).toHaveBeenCalledWith(
+            fakeDataInput().password,
+            'hash_password'
         )
     })
 })
