@@ -24,4 +24,9 @@ type CreatedUser = {
     updatedAt?: Date | null
 }
 
-export { CreatedUser, CreateUserRepoDTO, CreateUserUseCaseDTO }
+type LoginUserDTO = {
+    email: string
+    password: string
+}
+
+export { CreatedUser, CreateUserRepoDTO, CreateUserUseCaseDTO, LoginUserDTO }
