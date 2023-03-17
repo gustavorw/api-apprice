@@ -1,5 +1,5 @@
-import { badRequest, created, serverError } from '../../helpers/http/errors'
-import { UserExists } from '../../helpers/http/userExists'
+import { badRequest, created, serverError } from '../../helpers/http/responses'
+import { UserExists } from '../../helpers/http/errors/userExists'
 import { httpRequest, httpResponse } from '../../types/http'
 import { CreateUserRepoDTO, CreatedUser } from '../../types/user'
 import { IUseCase } from '../../useCases/IUseCase'

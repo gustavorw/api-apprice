@@ -8,12 +8,12 @@ import {
 } from '../../../src/types/user'
 import { IController } from '../../../src/controllers/IController'
 import { httpRequest } from '../../../src/types/http'
-import { UserExists } from '../../../src/helpers/http/userExists'
+import { UserExists } from '../../../src/helpers/http/errors/userExists'
 import {
     badRequest,
     created,
     serverError,
-} from '../../../src/helpers/http/errors'
+} from '../../../src/helpers/http/responses'
 
 type SutTypes = {
     sut: IController

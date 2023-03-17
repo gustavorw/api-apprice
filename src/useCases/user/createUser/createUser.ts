@@ -1,7 +1,7 @@
 import { IHash } from '../../../helpers/hash/interfaces/IHash'
 import { CreatedUser, CreateUserUseCaseDTO } from '../../../types/user'
 import { IUseCase } from '../../IUseCase'
-import { UserExists } from '../../../helpers/http/userExists'
+import { UserExists } from '../../../helpers/http/errors/userExists'
 import { IGetUserEmailRepository } from '../../../repositories/user/intefaces/IGetUserEmailRepository'
 import { IAddUserRepository } from '../../../repositories/user/intefaces/IAddUserRepository'
 

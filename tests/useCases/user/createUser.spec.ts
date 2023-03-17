@@ -3,7 +3,7 @@ import { IHash } from '../../../src/helpers/hash/interfaces/IHash'
 import { CreatedUser, CreateUserRepoDTO } from '../../../src/types/user'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { CreateUserUseCase } from '../../../src/useCases/user/createUser/createUser'
-import { UserExists } from '../../../src/helpers/http/userExists'
+import { UserExists } from '../../../src/helpers/http/errors/userExists'
 import { IAddUserRepository } from '../../../src/repositories/user/intefaces/IAddUserRepository'
 import { IGetUserEmailRepository } from '../../../src/repositories/user/intefaces/IGetUserEmailRepository'
 
