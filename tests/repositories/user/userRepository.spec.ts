@@ -1,8 +1,8 @@
 import { describe, test, expect, afterAll } from 'vitest'
-import { IUserRepository } from '../../../src/repositories/user/IUserRepository'
 import { UserRepository } from '../../../src/repositories/user/userRepository'
 import { clientdB } from '../../../src/database/client'
 import { CreateUserRepoDTO } from '../../../src/types/user'
+import { IAddUserRepository } from '../../../src/repositories/user/intefaces/IAddUserRepository'
 
 const client = clientdB
 
@@ -18,7 +18,7 @@ const fakeData = (): CreateUserRepoDTO => {
     return addUser
 }
 
-const makeSut = (): IUserRepository => {
+const makeSut = (): IAddUserRepository => {
     return new UserRepository(client)
 }
 

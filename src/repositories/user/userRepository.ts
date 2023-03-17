@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import { CreatedUser, CreateUserRepoDTO } from '../../types/user'
-import { IUserRepository } from './IUserRepository'
+import { IAddUserRepository } from './intefaces/IAddUserRepository'
 
-class UserRepository implements IUserRepository {
+class UserRepository implements IAddUserRepository {
     constructor(private readonly client: PrismaClient) {}
 
     async getUserByEmail(email: string): Promise<CreatedUser | null> {

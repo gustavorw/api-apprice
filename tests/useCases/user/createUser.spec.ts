@@ -1,15 +1,15 @@
 import { describe, expect, test, vi } from 'vitest'
 import { IEncrypter } from '../../../src/helpers/encrypter/IEncrypter'
 import { CreatedUser, CreateUserRepoDTO } from '../../../src/types/user'
-import { IUserRepository } from '../../../src/repositories/user/IUserRepository'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { CreateUserUseCase } from '../../../src/useCases/user/createUser/createUser'
 import { UserExists } from '../../../src/helpers/http/userExists'
+import { IAddUserRepository } from '../../../src/repositories/user/intefaces/IAddUserRepository'
 
 interface sutTypes {
     sut: IUseCase<CreateUserRepoDTO, CreatedUser, UserExists>
     encrypterStub: IEncrypter
-    userRepositoryStub: IUserRepository
+    userRepositoryStub: IAddUserRepository
 }
 
 const makeEncrypter = (): IEncrypter => {
@@ -21,8 +21,8 @@ const makeEncrypter = (): IEncrypter => {
     return new EncrypterStub()
 }
 
-const makeUserRepository = (): IUserRepository => {
-    class UserRepositoryStub implements IUserRepository {
+const makeUserRepository = (): IAddUserRepository => {
+    class UserRepositoryStub implements IAddUserRepository {
         async getUserByEmail(email: string): Promise<CreatedUser | null> {
             return new Promise((resolve) => resolve(null))
         }
