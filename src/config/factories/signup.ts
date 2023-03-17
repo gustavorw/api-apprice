@@ -4,7 +4,7 @@ import { Hasher } from '../../helpers/hash/bcryptAdapter'
 import { IAddUserRepository } from '../../repositories/user/intefaces/IAddUserRepository'
 import { IGetUserEmailRepository } from '../../repositories/user/intefaces/IGetUserEmailRepository'
 import { UserRepository } from '../../repositories/user/userRepository'
-import { CreateUserUseCase } from '../../useCases/user/createUser/createUser'
+import { CreateUserUseCase } from '../../useCases/user/createUser'
 
 const makeSignupController = (): SignupController => {
     const salt = 12
