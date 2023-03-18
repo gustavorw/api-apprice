@@ -40,7 +40,16 @@ describe('test bcryptAdapter', () => {
         vi.spyOn(sut, 'compare').mockReturnValue(
             new Promise((resolve) => resolve(true))
         )
-        const isEqual = await sut.compare('any_password', 'hash_password')
-        expect(isEqual).toBeTruthy()
+        const isValid = await sut.compare('any_password', 'hash_password')
+        expect(isValid).toBe(true)
+    })
+
+    test('test return false', async () => {
+        const sut = makeSut()
+        vi.spyOn(sut, 'compare').mockReturnValue(
+            new Promise((resolve) => resolve(false))
+        )
+        const isValid = await sut.compare('any_password', 'hash_password')
+        expect(isValid).toBe(false)
     })
 })
