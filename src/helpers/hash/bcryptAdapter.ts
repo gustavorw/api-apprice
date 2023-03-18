@@ -2,7 +2,7 @@ import { IHashCompare } from './interfaces/ICompare'
 import { IHash } from './interfaces/IHash'
 import bcrypt from 'bcryptjs'
 
-class Hasher implements IHash, IHashCompare {
+class BcryptAdapter implements IHash, IHashCompare {
     constructor(private readonly salt: number) {}
 
     async hash(password: string): Promise<String> {
@@ -11,8 +11,9 @@ class Hasher implements IHash, IHashCompare {
     }
 
     async compare(value: string, hash: string): Promise<boolean> {
-        await bcrypt.compare(value, hash)
+        const isEqual = await bcrypt.compare(value, hash)
+        return isEqual
     }
 }
 
-export { Hasher }
+export { BcryptAdapter }
