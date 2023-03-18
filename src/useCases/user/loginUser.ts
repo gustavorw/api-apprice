@@ -1,3 +1,4 @@
+import { IEncrypt } from '../../helpers/encrypt/interfaces/IEncrypt'
 import { IHashCompare } from '../../helpers/hash/interfaces/ICompare'
 import { AuthenticationError } from '../../helpers/http/errors/authenticationError'
 import { IGetUserEmailRepository } from '../../repositories/user/intefaces/IGetUserEmailRepository'
@@ -9,7 +10,8 @@ class LoginUserUseCase
 {
     constructor(
         private readonly getUserMailRepository: IGetUserEmailRepository,
-        private readonly hashCompare: IHashCompare
+        private readonly hashCompare: IHashCompare,
+        private readonly encrypter: IEncrypt
     ) {}
 
     async execute(data: LoginUserDTO): Promise<string | AuthenticationError> {
@@ -24,6 +26,7 @@ class LoginUserUseCase
         if (!isEqual) {
             return new AuthenticationError('Wrong Password.')
         }
+        await this.encrypter.encrypt(user.id)
         return ''
     }
 }

@@ -5,11 +5,13 @@ import { IUseCase } from '../../../src/useCases/IUseCase'
 import { LoginUserUseCase } from '../../../src/useCases/user/loginUser'
 import { AuthenticationError } from '../../../src/helpers/http/errors/authenticationError'
 import { IHashCompare } from '../../../src/helpers/hash/interfaces/ICompare'
+import { IEncrypt } from '../../../src/helpers/encrypt/interfaces/IEncrypt'
 
 type SutTypes = {
     sut: IUseCase<any, any, any>
     getUserEmailRepositoryStub: IGetUserEmailRepository
     hashCompareStub: IHashCompare
+    encryptStub: IEncrypt
 }
 
 const fakeDataInput = (): LoginUserDTO => ({
@@ -36,6 +38,15 @@ const makeHashCompare = (): IHashCompare => {
     return new HashCompareStub()
 }
 
+const makeEncrypt = (): IEncrypt => {
+    class EncryptStub implements IEncrypt {
+        encrypt(value: number): Promise<string> {
+            return new Promise((resolve) => resolve('any_token'))
+        }
+    }
+    return new EncryptStub()
+}
+
 const makeGetUserEmailRepository = (): IGetUserEmailRepository => {
     class GetUserEmailRepositoryStub implements IGetUserEmailRepository {
         async getUserByEmail(email: string): Promise<CreatedUser | null> {
@@ -48,11 +59,13 @@ const makeGetUserEmailRepository = (): IGetUserEmailRepository => {
 const makeSut = (): SutTypes => {
     const getUserEmailRepositoryStub = makeGetUserEmailRepository()
     const hashCompareStub = makeHashCompare()
+    const encryptStub = makeEncrypt()
     const sut = new LoginUserUseCase(
         getUserEmailRepositoryStub,
-        hashCompareStub
+        hashCompareStub,
+        encryptStub
     )
-    return { sut, getUserEmailRepositoryStub, hashCompareStub }
+    return { sut, getUserEmailRepositoryStub, hashCompareStub, encryptStub }
 }
 
 describe('Test LoginUserUseCase', () => {
@@ -96,5 +109,12 @@ describe('Test LoginUserUseCase', () => {
 
         const user = await sut.execute(fakeDataInput())
         expect(user).toEqual(new AuthenticationError('Wrong Password.'))
+    })
+
+    test('test call encrpyt method if user exists', async () => {
+        const { sut, encryptStub } = makeSut()
+        const encryptStubSpy = vi.spyOn(encryptStub, 'encrypt')
+        await sut.execute(fakeDataInput())
+        expect(encryptStubSpy).toHaveBeenCalledWith(fakeDataReturn()['id'])
     })
 })
