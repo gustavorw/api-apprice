@@ -26,8 +26,8 @@ class LoginUserUseCase
         if (!isEqual) {
             return new AuthenticationError('Wrong Password.')
         }
-        await this.encrypter.encrypt(user.id)
-        return ''
+        const token = await this.encrypter.encrypt(user.id)
+        return token
     }
 }
 

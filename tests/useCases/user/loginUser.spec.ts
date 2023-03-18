@@ -8,7 +8,7 @@ import { IHashCompare } from '../../../src/helpers/hash/interfaces/ICompare'
 import { IEncrypt } from '../../../src/helpers/encrypt/interfaces/IEncrypt'
 
 type SutTypes = {
-    sut: IUseCase<any, any, any>
+    sut: IUseCase<LoginUserDTO, string, AuthenticationError>
     getUserEmailRepositoryStub: IGetUserEmailRepository
     hashCompareStub: IHashCompare
     encryptStub: IEncrypt
@@ -116,5 +116,11 @@ describe('Test LoginUserUseCase', () => {
         const encryptStubSpy = vi.spyOn(encryptStub, 'encrypt')
         await sut.execute(fakeDataInput())
         expect(encryptStubSpy).toHaveBeenCalledWith(fakeDataReturn()['id'])
+    })
+
+    test('test return an token success', async () => {
+        const { sut } = makeSut()
+        const token = await sut.execute(fakeDataInput())
+        expect(token).toBe('any_token')
     })
 })
