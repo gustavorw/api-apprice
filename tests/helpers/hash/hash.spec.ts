@@ -1,14 +1,14 @@
 import { describe, test, expect, vi, afterAll } from 'vitest'
-import { Hasher } from '../../src/helpers/hash/bcryptAdapter'
+import { Hasher } from '../../../src/helpers/hash/bcryptAdapter'
 import bcrypt from 'bcryptjs'
-import { IHash } from '../../src/helpers/hash/interfaces/IHash'
+import { IHash } from '../../../src/helpers/hash/interfaces/IHash'
 
 const salt = 12
 const makeSut = (): IHash => {
     return new Hasher(salt)
 }
 
-describe('test encrypter adapter', () => {
+describe('test hasher', () => {
     afterAll(() => {
         vi.resetAllMocks()
     })
