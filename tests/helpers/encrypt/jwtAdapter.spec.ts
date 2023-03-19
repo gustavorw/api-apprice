@@ -16,4 +16,13 @@ describe('test jwtAdapter', () => {
             expiresIn: '1d',
         })
     })
+
+    test('test return token success', async () => {
+        const sut = makeSut()
+        vi.spyOn(jwt, 'sign').mockImplementation(() => {
+            return 'any_token'
+        })
+        const token = await sut.encrypt(1)
+        expect(token).toBe('any_token')
+    })
 })
