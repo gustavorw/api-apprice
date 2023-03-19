@@ -1,14 +1,11 @@
 import { describe, test, expect, afterAll, vi } from 'vitest'
 import { UserRepository } from '../../../src/repositories/user/userRepository'
 import { clientdB } from '../../../src/database/client'
-import { CreateUserRepoDTO, CreatedUser } from '../../../src/types/user'
-import { IAddUserRepository } from '../../../src/repositories/user/intefaces/IAddUserRepository'
-import { IGetUserEmailRepository } from '../../../src/repositories/user/intefaces/IGetUserEmailRepository'
+import { CreateUserRepoDTO } from '../../../src/types/user'
 
 const client = clientdB
 
-const fakeData = (): CreatedUser => ({
-    id: 1,
+const fakeData = (): CreateUserRepoDTO => ({
     name: 'any_name',
     email: 'any_email@mail.com',
     password: 'any_password',
@@ -17,11 +14,27 @@ const fakeData = (): CreatedUser => ({
     updatedAt: new Date('2023-03-08T09:00'),
 })
 
-const makeSut = (): IGetUserEmailRepository => {
+const makeSut = (): UserRepository => {
     return new UserRepository(client)
 }
 
-describe('test getUserEmailRepository', () => {
+describe('test addUserRepository', () => {
+    afterAll(async () => {
+        await client.user.deleteMany({})
+    })
+
+    test('test add user', async () => {
+        const sut = makeSut()
+        const user = await sut.add(fakeData())
+
+        expect(user).toBeTruthy()
+        expect(user.id).toBeTruthy()
+        expect(user.id).toBeTypeOf('number')
+        expect(user.name).toBe('any_name')
+        expect(user.email).toBe('any_email@mail.com')
+        expect(user.password).toBe('any_password')
+    })
+
     test('test get user by email return null', async () => {
         const sut = makeSut()
         vi.spyOn(sut, 'getUserByEmail').mockReturnValue(
@@ -31,11 +44,8 @@ describe('test getUserEmailRepository', () => {
         expect(user).toBeNull()
     })
 
-    test('test get user by email return a user', async () => {
+    test('test get user by email return an user', async () => {
         const sut = makeSut()
-        vi.spyOn(sut, 'getUserByEmail').mockReturnValue(
-            new Promise((resolve) => resolve(fakeData()))
-        )
         const user = await sut.getUserByEmail('any_email@mail.com')
         expect(user).toBeTruthy()
     })
