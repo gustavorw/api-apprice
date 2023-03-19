@@ -12,7 +12,7 @@ describe('test bcryptAdapter', () => {
         vi.resetAllMocks()
     })
 
-    test('test call hash method with correct values', async () => {
+    test('test call hash method of bcrypt with correct values', async () => {
         const sut = makeSut()
         const hashSpy = vi.spyOn(bcrypt, 'hash')
         await sut.hash('any_password')
@@ -21,9 +21,9 @@ describe('test bcryptAdapter', () => {
 
     test('test return hashed password', async () => {
         const sut = makeSut()
-        vi.spyOn(sut, 'hash').mockReturnValue(
-            new Promise((resolve) => resolve('hash_password'))
-        )
+        vi.spyOn(bcrypt, 'hash').mockImplementation(async () => {
+            return new Promise((resolve) => resolve('hash_password'))
+        })
         const hashedPassword = await sut.hash('any_password')
         expect(hashedPassword).toBe('hash_password')
     })
@@ -35,16 +35,16 @@ describe('test bcryptAdapter', () => {
         expect(compareSpy).toHaveBeenCalledWith('any_password', 'hash_password')
     })
 
-    test('test return true', async () => {
+    test('test return true if bcrypt return true', async () => {
         const sut = makeSut()
-        vi.spyOn(sut, 'compare').mockReturnValue(
-            new Promise((resolve) => resolve(true))
-        )
+        vi.spyOn(bcrypt, 'compare').mockImplementation(async () => {
+            return new Promise((resolve) => resolve(true))
+        })
         const isValid = await sut.compare('any_password', 'hash_password')
         expect(isValid).toBe(true)
     })
 
-    test('test return false', async () => {
+    test('test return false if bcrypt return false', async () => {
         const sut = makeSut()
         vi.spyOn(sut, 'compare').mockReturnValue(
             new Promise((resolve) => resolve(false))
