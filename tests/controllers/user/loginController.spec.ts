@@ -5,6 +5,7 @@ import { IController } from '../../../src/controllers/IController'
 import { LoginUserDTO } from '../../../src/types/user'
 import { AuthenticationError } from '../../../src/helpers/http/errors/authenticationError'
 import { LoginController } from '../../../src/controllers/user/loginController'
+import { unauthorized } from '../../../src/helpers/http/responses'
 
 type SutTypes = {
     sut: IController
@@ -53,5 +54,19 @@ describe('test loginController', () => {
         )
         await sut.handle(fakeData())
         expect(loginUserUseCaseStubSpy).toHaveBeenCalledWith(fakeData().body)
+    })
+
+    test('test return badRequest if email wrong provided', async () => {
+        const { sut, loginUserUseCaseStub } = makeSut()
+        vi.spyOn(loginUserUseCaseStub, 'execute').mockReturnValue(
+            new Promise((resolve) =>
+                resolve(new AuthenticationError('Email not exists.'))
+            )
+        )
+        const httpResponse = await sut.handle(fakeData())
+        expect(httpResponse.statusCode).toBe(401)
+        expect(httpResponse.body).toEqual(
+            unauthorized('Email not exists.').body
+        )
     })
 })

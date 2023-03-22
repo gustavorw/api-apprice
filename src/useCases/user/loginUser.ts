@@ -17,7 +17,7 @@ class LoginUserUseCase
     async execute(data: LoginUserDTO): Promise<string | AuthenticationError> {
         const user = await this.getUserMailRepository.getUserByEmail(data.email)
         if (!user) {
-            return new AuthenticationError('Wrong email.')
+            return new AuthenticationError('Email not exists.')
         }
         const isEqual = await this.hashCompare.compare(
             data.password,

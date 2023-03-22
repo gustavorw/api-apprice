@@ -1,4 +1,5 @@
 import { AuthenticationError } from '../../helpers/http/errors/authenticationError'
+import { unauthorized } from '../../helpers/http/responses'
 import { httpRequest, httpResponse } from '../../types/http'
 import { LoginUserDTO } from '../../types/user'
 import { IUseCase } from '../../useCases/IUseCase'
@@ -13,7 +14,10 @@ class LoginController implements IController {
         >
     ) {}
     async handle(httpResquest: httpRequest): Promise<httpResponse> {
-        await this.loginUseCase.execute(httpResquest.body)
+        const token = await this.loginUseCase.execute(httpResquest.body)
+        if (token instanceof AuthenticationError) {
+            return unauthorized(token.message)
+        }
         return new Promise((resolve) => resolve({ statusCode: 200, body: '' }))
     }
 }

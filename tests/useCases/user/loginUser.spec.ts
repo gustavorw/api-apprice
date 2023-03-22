@@ -88,7 +88,7 @@ describe('Test LoginUserUseCase', () => {
         )
 
         const user = await sut.execute(fakeDataInput())
-        expect(user).toEqual(new AuthenticationError('Wrong email.'))
+        expect(user).toEqual(new AuthenticationError('Email not exists.'))
     })
 
     test('test call compare with correct values', async () => {
