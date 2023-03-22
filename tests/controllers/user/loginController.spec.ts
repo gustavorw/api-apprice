@@ -5,7 +5,11 @@ import { IController } from '../../../src/controllers/IController'
 import { LoginUserDTO } from '../../../src/types/user'
 import { AuthenticationError } from '../../../src/helpers/http/errors/authenticationError'
 import { LoginController } from '../../../src/controllers/user/loginController'
-import { ok, unauthorized } from '../../../src/helpers/http/responses'
+import {
+    ok,
+    serverError,
+    unauthorized,
+} from '../../../src/helpers/http/responses'
 
 type SutTypes = {
     sut: IController
@@ -80,6 +84,19 @@ describe('test loginController', () => {
         const httpResponse = await sut.handle(fakeData())
         expect(httpResponse.statusCode).toBe(401)
         expect(httpResponse.body).toEqual(unauthorized('Wrong Password.').body)
+    })
+
+    test('test return status 500 if loginUseCase raise exception', async () => {
+        const { sut, loginUserUseCaseStub } = makeSut()
+        vi.spyOn(loginUserUseCaseStub, 'execute').mockImplementation(
+            async () =>
+                new Promise<string | AuthenticationError>((resolve, reject) =>
+                    reject(new Error())
+                )
+        )
+        const httpResponse = await sut.handle(fakeData())
+        expect(httpResponse.statusCode).toBe(500)
+        expect(httpResponse.body).toEqual(serverError().body)
     })
 
     test('test return ok if loginUserUseCase return an token', async () => {
