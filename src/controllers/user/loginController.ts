@@ -1,5 +1,5 @@
 import { AuthenticationError } from '../../helpers/http/errors/authenticationError'
-import { unauthorized } from '../../helpers/http/responses'
+import { ok, unauthorized } from '../../helpers/http/responses'
 import { httpRequest, httpResponse } from '../../types/http'
 import { LoginUserDTO } from '../../types/user'
 import { IUseCase } from '../../useCases/IUseCase'
@@ -18,7 +18,7 @@ class LoginController implements IController {
         if (token instanceof AuthenticationError) {
             return unauthorized(token.message)
         }
-        return new Promise((resolve) => resolve({ statusCode: 200, body: '' }))
+        return ok({ token: token })
     }
 }
 

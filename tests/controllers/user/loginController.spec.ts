@@ -5,7 +5,7 @@ import { IController } from '../../../src/controllers/IController'
 import { LoginUserDTO } from '../../../src/types/user'
 import { AuthenticationError } from '../../../src/helpers/http/errors/authenticationError'
 import { LoginController } from '../../../src/controllers/user/loginController'
-import { unauthorized } from '../../../src/helpers/http/responses'
+import { ok, unauthorized } from '../../../src/helpers/http/responses'
 
 type SutTypes = {
     sut: IController
@@ -80,5 +80,12 @@ describe('test loginController', () => {
         const httpResponse = await sut.handle(fakeData())
         expect(httpResponse.statusCode).toBe(401)
         expect(httpResponse.body).toEqual(unauthorized('Wrong Password.').body)
+    })
+
+    test('test return ok if loginUserUseCase return an token', async () => {
+        const { sut } = makeSut()
+        const httpResponse = await sut.handle(fakeData())
+        expect(httpResponse.statusCode).toBe(200)
+        expect(httpResponse.body).toEqual(ok({ token: 'any_token' }).body)
     })
 })
