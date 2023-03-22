@@ -69,4 +69,16 @@ describe('test loginController', () => {
             unauthorized('Email not exists.').body
         )
     })
+
+    test('test return badRequest if password not match', async () => {
+        const { sut, loginUserUseCaseStub } = makeSut()
+        vi.spyOn(loginUserUseCaseStub, 'execute').mockReturnValue(
+            new Promise((resolve) =>
+                resolve(new AuthenticationError('Wrong Password.'))
+            )
+        )
+        const httpResponse = await sut.handle(fakeData())
+        expect(httpResponse.statusCode).toBe(401)
+        expect(httpResponse.body).toEqual(unauthorized('Wrong Password.').body)
+    })
 })
