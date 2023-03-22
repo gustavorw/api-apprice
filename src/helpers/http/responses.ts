@@ -8,6 +8,13 @@ const badRequest = (errorMessage: string): httpResponse => ({
     },
 })
 
+const unauthorized = (errorMessage: string): httpResponse => ({
+    statusCode: 401,
+    body: {
+        message: errorMessage,
+    },
+})
+
 const serverError = (): httpResponse => ({
     statusCode: 500,
     body: new ServerError(),
@@ -23,4 +30,4 @@ const created = (data: any): httpResponse => ({
     body: data,
 })
 
-export { badRequest, serverError, ok, created }
+export { badRequest, serverError, ok, created, unauthorized }
