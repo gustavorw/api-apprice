@@ -18,7 +18,10 @@ class CreateUserMiddleware implements IMiddleware {
                 })
                 .email({ message: 'Invalid email address!' }),
             password: z
-                .string({ invalid_type_error: 'Password must be a string!' })
+                .string({
+                    invalid_type_error: 'Password must be a string!',
+                    required_error: 'Password is required!',
+                })
                 .min(8, {
                     message: 'Password must be 8 or more characters long!',
                 }),

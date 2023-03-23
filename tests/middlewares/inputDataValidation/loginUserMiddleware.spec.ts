@@ -19,4 +19,17 @@ describe('test loginUserMiddleware', () => {
         const result = await sut.verifyData(data)
         expect(result).toBeTruthy()
     })
+
+    test('test return error message of email parse data schema', async () => {
+        const sut = makeSut()
+        const data = {
+            body: {
+                email: '',
+                password: 'any_password',
+            },
+        }
+
+        const result = await sut.verifyData(data)
+        expect(result).toBe('Invalid email address!')
+    })
 })
