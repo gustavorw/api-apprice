@@ -32,4 +32,17 @@ describe('test loginUserMiddleware', () => {
         const result = await sut.verifyData(data)
         expect(result).toBe('Invalid email address!')
     })
+
+    test('test return error message of pasword parse data schema', async () => {
+        const sut = makeSut()
+        const data = {
+            body: {
+                email: 'any_email@mail.com',
+                password: '',
+            },
+        }
+
+        const result = await sut.verifyData(data)
+        expect(result).toBe('Password must be 8 or more characters long!')
+    })
 })
