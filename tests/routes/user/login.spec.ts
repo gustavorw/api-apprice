@@ -39,4 +39,14 @@ describe('test login route', () => {
             })
             .expect(200)
     })
+
+    test('test middleware return badRequest', async () => {
+        await resquest(app)
+            .post('/api/v1/user/login')
+            .send({
+                email: '',
+                password: 'any_password',
+            })
+            .expect(400)
+    })
 })
