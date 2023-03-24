@@ -1,5 +1,4 @@
-import { app } from "./config/app";
+import { app } from './config/app'
+import env from './config/env'
 
-app.listen(8080, () =>
-    console.log('Run server in port 8080')
-)
+app.listen(env.port, () => console.log(`Run server On port ${env.port}`))
