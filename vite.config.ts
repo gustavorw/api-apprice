@@ -4,6 +4,7 @@ export default defineConfig({
     test: {
         coverage: {
             reporter: ['text'],
+            exclude: ['src/config/env.ts', 'tests/**'],
         },
     },
 })
