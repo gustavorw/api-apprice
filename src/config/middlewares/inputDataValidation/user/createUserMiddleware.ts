@@ -1,9 +1,10 @@
-import { httpRequest } from '../../../../types/http'
+import { badRequest, ok } from '../../../../helpers/http/responses'
+import { httpRequest, httpResponse } from '../../../../types/http'
 import { IMiddleware } from '../IMiddleware'
 import { z } from 'zod'
 
 class CreateUserMiddleware implements IMiddleware {
-    async verifyData(httpRequest: httpRequest): Promise<boolean | string> {
+    async handle(httpRequest: httpRequest): Promise<httpResponse> {
         const userSchema = z.object({
             name: z
                 .string({
@@ -35,9 +36,9 @@ class CreateUserMiddleware implements IMiddleware {
 
         const result = userSchema.safeParse(httpRequest.body)
         if (result.success) {
-            return true
+            return ok({ success: true })
         } else {
-            return result.error.errors[0]['message']
+            return badRequest(result.error.errors[0]['message'])
         }
     }
 }

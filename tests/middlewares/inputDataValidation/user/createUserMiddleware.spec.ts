@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { IMiddleware } from '../../../../src/config/middlewares/inputDataValidation/IMiddleware'
 import { CreateUserMiddleware } from '../../../../src/config/middlewares/inputDataValidation/user/createUserMiddleware'
+import { ok, badRequest } from '../../../../src/helpers/http/responses'
 
 const makeSut = (): IMiddleware => {
     return new CreateUserMiddleware()
@@ -17,8 +18,8 @@ describe('create user middleware', () => {
                 price_hour: 10,
             },
         }
-        const result = await sut.verifyData(data)
-        expect(result).toBeTruthy()
+        const result = await sut.handle(data)
+        expect(result).toEqual(ok({ success: true }))
     })
 
     test('test return error message of name parse data schema', async () => {
@@ -31,9 +32,8 @@ describe('create user middleware', () => {
                 price_hour: 10,
             },
         }
-        const result = await sut.verifyData(data)
-        expect(result).toBeTypeOf('string')
-        expect(result).toBe("Name can't be empty!")
+        const result = await sut.handle(data)
+        expect(result).toEqual(badRequest("Name can't be empty!"))
     })
 
     test('test return error message of email parse data schema', async () => {
@@ -46,9 +46,8 @@ describe('create user middleware', () => {
                 // price_hour: 10,
             },
         }
-        const result = await sut.verifyData(data)
-        expect(result).toBeTypeOf('string')
-        expect(result).toBe('Invalid email address!')
+        const result = await sut.handle(data)
+        expect(result).toEqual(badRequest('Invalid email address!'))
     })
 
     test('test return error message of password parse data schema', async () => {
@@ -61,8 +60,9 @@ describe('create user middleware', () => {
                 price_hour: 10,
             },
         }
-        const result = await sut.verifyData(data)
-        expect(result).toBeTypeOf('string')
-        expect(result).toBe('Password must be 8 or more characters long!')
+        const result = await sut.handle(data)
+        expect(result).toEqual(
+            badRequest('Password must be 8 or more characters long!')
+        )
     })
 })
