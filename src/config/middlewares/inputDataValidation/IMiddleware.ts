@@ -1,7 +1,7 @@
-import { httpRequest } from '../../../types/http'
+import { httpRequest, httpResponse } from '../../../types/http'
 
 interface IMiddleware {
-    verifyData(httpRequest: httpRequest): Promise<boolean | string>
+    handle(httpResquest: httpRequest): Promise<httpResponse>
 }
 
 export { IMiddleware }
