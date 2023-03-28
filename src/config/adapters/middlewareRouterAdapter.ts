@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { httpRequest } from '../../types/http'
+import { httpRequest, httpResponse } from '../../types/http'
 import { IMiddleware } from '../middlewares/inputDataValidation/IMiddleware'
 
 const middlewareAdapter = (middleware: IMiddleware) => {
@@ -8,11 +8,13 @@ const middlewareAdapter = (middleware: IMiddleware) => {
             body: req.body,
         }
 
-        const dataValidation = await middleware.verifyData(httpRequest)
-        if (dataValidation === true) {
+        const httpResponse: httpResponse = await middleware.handle(httpRequest)
+        if (httpResponse.body.success) {
             next()
         } else {
-            res.status(400).json({ error: dataValidation })
+            res.status(httpResponse.statusCode).json({
+                error: httpResponse.body.message,
+            })
         }
     }
 }
