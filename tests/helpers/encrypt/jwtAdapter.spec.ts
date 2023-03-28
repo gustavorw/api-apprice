@@ -31,4 +31,12 @@ describe('test jwtAdapter', () => {
         await sut.decrypt('any_token')
         expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
     })
+
+    test('test return a value on verify success', async () => {
+        const sut = makeSut()
+        vi.spyOn(jwt, 'verify').mockReturnValue(1 as any)
+
+        const value = await sut.decrypt('any_token')
+        expect(value).toBe(1)
+    })
 })

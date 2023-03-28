@@ -10,9 +10,9 @@ class JwtAdapter implements IEncrypt, IDecrypt {
         return token
     }
 
-    async decrypt(token: string): Promise<string | number> {
-        jwt.verify(token, this.secret)
-        return new Promise((resolve) => resolve(''))
+    async decrypt(token: string): Promise<number | string> {
+        const value = jwt.verify(token, this.secret) as any
+        return value
     }
 }
 
