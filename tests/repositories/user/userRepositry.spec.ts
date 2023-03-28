@@ -1,4 +1,4 @@
-import { describe, test, expect, afterAll, vi } from 'vitest'
+import { describe, test, expect, afterAll, vi, afterEach } from 'vitest'
 import { UserRepository } from '../../../src/repositories/user/userRepository'
 import { clientdB } from '../../../src/database/client'
 import { CreateUserRepoDTO } from '../../../src/types/user'
@@ -48,5 +48,14 @@ describe('test addUserRepository', () => {
         const sut = makeSut()
         const user = await sut.getUserByEmail('any_email@mail.com')
         expect(user).toBeTruthy()
+    })
+
+    test('test get user by id return null', async () => {
+        const sut = makeSut()
+        vi.spyOn(sut, 'getUserById').mockReturnValue(
+            new Promise((resolve) => resolve(null))
+        )
+        const user = await sut.getUserById(1)
+        expect(user).toBeNull()
     })
 })
