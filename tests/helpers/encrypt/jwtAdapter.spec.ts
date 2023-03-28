@@ -1,9 +1,8 @@
 import { describe, expect, test, vi } from 'vitest'
 import jwt from 'jsonwebtoken'
-import { IEncrypt } from '../../../src/helpers/encrypt/interfaces/IEncrypt'
 import { JwtAdapter } from '../../../src/helpers/encrypt/jwtAdapter'
 
-const makeSut = (): IEncrypt => {
+const makeSut = (): JwtAdapter => {
     return new JwtAdapter('secret')
 }
 
@@ -24,5 +23,12 @@ describe('test jwtAdapter', () => {
         })
         const token = await sut.encrypt(1)
         expect(token).toBe('any_token')
+    })
+
+    test('test call verify method of jwt with correct values', async () => {
+        const sut = makeSut()
+        const verifySpy = vi.spyOn(jwt, 'verify').mockReturnValue()
+        await sut.decrypt('any_token')
+        expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
     })
 })
