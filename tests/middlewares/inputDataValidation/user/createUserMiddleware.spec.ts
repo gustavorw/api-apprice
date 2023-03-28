@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { IMiddleware } from '../../../src/config/middlewares/inputDataValidation/IMiddleware'
-import { CreateUserMiddleware } from '../../../src/config/middlewares/inputDataValidation/createUserMiddleware'
+import { IMiddleware } from '../../../../src/config/middlewares/inputDataValidation/IMiddleware'
+import { CreateUserMiddleware } from '../../../../src/config/middlewares/inputDataValidation/user/createUserMiddleware'
 
 const makeSut = (): IMiddleware => {
     return new CreateUserMiddleware()

@@ -1,5 +1,5 @@
-import { httpRequest } from '../../../types/http'
-import { IMiddleware } from './IMiddleware'
+import { httpRequest } from '../../../../types/http'
+import { IMiddleware } from '../IMiddleware'
 import { z } from 'zod'
 
 class CreateUserMiddleware implements IMiddleware {
