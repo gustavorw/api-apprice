@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { IMiddleware } from '../../../../src/config/middlewares/inputDataValidation/IMiddleware'
 import { LoginMiddleware } from '../../../../src/config/middlewares/inputDataValidation/user/loginUserMiddleware'
+import { ok, badRequest } from '../../../../src/helpers/http/responses'
 
 const makeSut = (): IMiddleware => {
     return new LoginMiddleware()
@@ -16,8 +17,8 @@ describe('test loginUserMiddleware', () => {
             },
         }
 
-        const result = await sut.verifyData(data)
-        expect(result).toBeTruthy()
+        const result = await sut.handle(data)
+        expect(result).toEqual(ok({ success: true }))
     })
 
     test('test return error message of email parse data schema', async () => {
@@ -29,8 +30,8 @@ describe('test loginUserMiddleware', () => {
             },
         }
 
-        const result = await sut.verifyData(data)
-        expect(result).toBe('Invalid email address!')
+        const result = await sut.handle(data)
+        expect(result).toEqual(badRequest('Invalid email address!'))
     })
 
     test('test return error message of pasword parse data schema', async () => {
@@ -42,7 +43,9 @@ describe('test loginUserMiddleware', () => {
             },
         }
 
-        const result = await sut.verifyData(data)
-        expect(result).toBe('Password must be 8 or more characters long!')
+        const result = await sut.handle(data)
+        expect(result).toEqual(
+            badRequest('Password must be 8 or more characters long!')
+        )
     })
 })
