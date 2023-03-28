@@ -14,6 +14,17 @@ const fakeData = (): CreateUserRepoDTO => ({
     updatedAt: new Date('2023-03-08T09:00'),
 })
 
+const userId = await client.user.create({
+    data: {
+        name: 'another_name',
+        email: 'another_email@mail.com',
+        password: 'another_password',
+        price_hour: 10.5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+})
+
 const makeSut = (): UserRepository => {
     return new UserRepository(client)
 }
@@ -57,5 +68,12 @@ describe('test addUserRepository', () => {
         )
         const user = await sut.getUserById(1)
         expect(user).toBeNull()
+    })
+
+    test('test get user by email return an user', async () => {
+        const sut = makeSut()
+        const user = await sut.getUserById(userId.id)
+        expect(user).toBeTruthy()
+        expect(user?.id).toBe(userId.id)
     })
 })
