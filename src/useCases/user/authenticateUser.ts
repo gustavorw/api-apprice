@@ -3,6 +3,7 @@ import { IDecrypt } from '../../helpers/encrypt/interfaces/IDecrypt'
 import { AuthenticationError } from '../../helpers/http/errors/authenticationError'
 import { CreatedUser } from '../../types/user'
 import { IUseCase } from '../IUseCase'
+import { IGetUserIdRepository } from '../../repositories/user/intefaces/IGetUserIdRepository'
 
 type Header = {
     authorization?: string
@@ -11,7 +12,10 @@ type Header = {
 class AuthenticateUserUseCase
     implements IUseCase<Header, CreatedUser, AuthenticationError>
 {
-    constructor(private readonly decrypter: IDecrypt) {}
+    constructor(
+        private readonly decrypter: IDecrypt,
+        private readonly getUserIdREpository: IGetUserIdRepository
+    ) {}
 
     async execute(data: Header): Promise<CreatedUser | AuthenticationError> {
         if (!data.authorization) {
@@ -29,6 +33,8 @@ class AuthenticateUserUseCase
         if (value === 'Expired token.') {
             return new AuthenticationError(value)
         }
+        const userId = Number(value)
+        await this.getUserIdREpository.getUserById(userId)
 
         return new Promise((resolve) =>
             resolve({
