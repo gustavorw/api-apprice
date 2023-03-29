@@ -17,9 +17,15 @@ const makeSut = (): SutTypes => {
 }
 
 describe('test authenticateUserUseCase', () => {
-    test('test return authenticateError if header authorization not provided', async () => {
+    test('test return authenticateError if not header provided', async () => {
         const { sut } = makeSut()
         const result = await sut.execute({})
         expect(result).toEqual(new AuthenticationError('Token not provided.'))
+    })
+
+    test('test return authenticateError if token length not equal to two', async () => {
+        const { sut } = makeSut()
+        const result = await sut.execute({ authorization: 'Bearerany_token' })
+        expect(result).toEqual(new AuthenticationError('Invalid token.'))
     })
 })
