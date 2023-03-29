@@ -37,6 +37,6 @@ describe('test jwtAdapter', () => {
         vi.spyOn(jwt, 'verify').mockReturnValue({ id: 1 } as any)
 
         const value = await sut.decrypt('any_token')
-        expect(value).toEqual({ id: 1 })
+        expect(value).toEqual(1)
     })
 })

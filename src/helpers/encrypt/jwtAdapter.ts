@@ -2,6 +2,10 @@ import { IDecrypt } from './interfaces/IDecrypt'
 import { IEncrypt } from './interfaces/IEncrypt'
 import jwt from 'jsonwebtoken'
 
+type JwtPayload = {
+    id: number
+}
+
 class JwtAdapter implements IEncrypt, IDecrypt {
     constructor(private readonly secret: string) {}
 
@@ -10,9 +14,13 @@ class JwtAdapter implements IEncrypt, IDecrypt {
         return token
     }
 
-    async decrypt(token: string): Promise<number | string> {
-        const value = jwt.verify(token, this.secret) as any
-        return value
+    async decrypt(token: string): Promise<string | number> {
+        try {
+            const { id } = jwt.verify(token, this.secret) as JwtPayload
+            return id
+        } catch (error) {
+            return 'Expired token.'
+        }
     }
 }
 
