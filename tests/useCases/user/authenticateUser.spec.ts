@@ -1,19 +1,32 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import {
     AuthenticateUserUseCase,
     Header,
 } from '../../../src/useCases/user/authenticateUser'
+import { IDecrypt } from '../../../src/helpers/encrypt/interfaces/IDecrypt'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { CreatedUser } from '../../../src/types/user'
 import { AuthenticationError } from '../../../src/helpers/http/errors/authenticationError'
+import { IGetUserIdRepository } from '../../../src/repositories/user/intefaces/IGetUserIdRepository'
 
 type SutTypes = {
+    decrypterStub: IDecrypt
     sut: IUseCase<Header, CreatedUser, AuthenticationError>
 }
 
+const makeDecrypter = (): IDecrypt => {
+    class Decrypter implements IDecrypt {
+        async decrypt(token: string): Promise<string | number> {
+            return new Promise((resolve) => resolve({ id: 1 } as any))
+        }
+    }
+    return new Decrypter()
+}
+
 const makeSut = (): SutTypes => {
-    const sut = new AuthenticateUserUseCase()
-    return { sut }
+    const decrypterStub = makeDecrypter()
+    const sut = new AuthenticateUserUseCase(decrypterStub)
+    return { sut, decrypterStub }
 }
 
 describe('test authenticateUserUseCase', () => {
@@ -35,5 +48,12 @@ describe('test authenticateUserUseCase', () => {
         expect(result).toEqual(
             new AuthenticationError('Token badly formatted.')
         )
+    })
+
+    test('test call verify method of bcryptAdapter with correct value', async () => {
+        const { sut, decrypterStub } = makeSut()
+        const decrypterStubSpy = vi.spyOn(decrypterStub, 'decrypt')
+        await sut.execute({ authorization: 'Bearer any_token' })
+        expect(decrypterStubSpy).toHaveBeenCalledWith('any_token')
     })
 })

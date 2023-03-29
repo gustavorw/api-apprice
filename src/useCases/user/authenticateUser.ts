@@ -1,3 +1,4 @@
+import { IDecrypt } from '../../helpers/encrypt/interfaces/IDecrypt'
 import { AuthenticationError } from '../../helpers/http/errors/authenticationError'
 import { CreatedUser } from '../../types/user'
 import { IUseCase } from '../IUseCase'
@@ -9,6 +10,8 @@ type Header = {
 class AuthenticateUserUseCase
     implements IUseCase<Header, CreatedUser, AuthenticationError>
 {
+    constructor(private readonly decrypter: IDecrypt) {}
+
     async execute(data: Header): Promise<CreatedUser | AuthenticationError> {
         if (!data.authorization) {
             return new AuthenticationError('Token not provided.')
@@ -21,7 +24,7 @@ class AuthenticateUserUseCase
         if (!/^Bearer$/i.test(schema)) {
             return new AuthenticationError('Token badly formatted.')
         }
-
+        await this.decrypter.decrypt(token)
         return new Promise((resolve) =>
             resolve({
                 id: 1,
