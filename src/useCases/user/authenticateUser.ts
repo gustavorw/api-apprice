@@ -13,9 +13,13 @@ class AuthenticateUserUseCase
         if (!data.authorization) {
             return new AuthenticationError('Token not provided.')
         }
-        const parts = data.authorization.split('')
+        const parts = data.authorization.split(' ')
         if (parts.length !== 2) {
             return new AuthenticationError('Invalid token.')
+        }
+        const [schema, token] = parts
+        if (!/^Bearer$/i.test(schema)) {
+            return new AuthenticationError('Token badly formatted.')
         }
 
         return new Promise((resolve) =>

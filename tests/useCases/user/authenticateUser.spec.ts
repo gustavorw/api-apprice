@@ -28,4 +28,12 @@ describe('test authenticateUserUseCase', () => {
         const result = await sut.execute({ authorization: 'Bearerany_token' })
         expect(result).toEqual(new AuthenticationError('Invalid token.'))
     })
+
+    test('test return authenticateError if token badly formatted', async () => {
+        const { sut } = makeSut()
+        const result = await sut.execute({ authorization: 'token any_token' })
+        expect(result).toEqual(
+            new AuthenticationError('Token badly formatted.')
+        )
+    })
 })
