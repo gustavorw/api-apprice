@@ -7,7 +7,6 @@ import { IDecrypt } from '../../../src/helpers/encrypt/interfaces/IDecrypt'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { CreatedUser } from '../../../src/types/user'
 import { AuthenticationError } from '../../../src/helpers/http/errors/authenticationError'
-import { IGetUserIdRepository } from '../../../src/repositories/user/intefaces/IGetUserIdRepository'
 
 type SutTypes = {
     decrypterStub: IDecrypt
@@ -55,5 +54,14 @@ describe('test authenticateUserUseCase', () => {
         const decrypterStubSpy = vi.spyOn(decrypterStub, 'decrypt')
         await sut.execute({ authorization: 'Bearer any_token' })
         expect(decrypterStubSpy).toHaveBeenCalledWith('any_token')
+    })
+
+    test('test return authenticateError if verify returns expired token message', async () => {
+        const { sut, decrypterStub } = makeSut()
+        vi.spyOn(decrypterStub, 'decrypt').mockReturnValue(
+            new Promise<number | string>((resolve) => resolve('Expired token.'))
+        )
+        const result = await sut.execute({ authorization: 'Bearer any_token' })
+        expect(result).toEqual(new AuthenticationError('Expired token.'))
     })
 })

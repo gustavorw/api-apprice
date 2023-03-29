@@ -1,3 +1,4 @@
+import { number, string } from 'zod'
 import { IDecrypt } from '../../helpers/encrypt/interfaces/IDecrypt'
 import { AuthenticationError } from '../../helpers/http/errors/authenticationError'
 import { CreatedUser } from '../../types/user'
@@ -24,7 +25,11 @@ class AuthenticateUserUseCase
         if (!/^Bearer$/i.test(schema)) {
             return new AuthenticationError('Token badly formatted.')
         }
-        await this.decrypter.decrypt(token)
+        const value = await this.decrypter.decrypt(token)
+        if (value === 'Expired token.') {
+            return new AuthenticationError(value)
+        }
+
         return new Promise((resolve) =>
             resolve({
                 id: 1,
