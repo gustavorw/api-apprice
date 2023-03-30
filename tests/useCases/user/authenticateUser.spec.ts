@@ -19,7 +19,6 @@ const dataUser = (): CreatedUser => ({
     id: 1,
     name: 'any_name',
     email: 'any_email@email.com',
-    password: 'hash_password',
     price_hour: 10.5,
     createdAt: new Date('2023-03-08T09:00'),
     updatedAt: new Date('2023-03-08T09:00'),
@@ -28,7 +27,17 @@ const dataUser = (): CreatedUser => ({
 const makeGetUserIdRepository = (): IGetUserIdRepository => {
     class GetUserByEmailRepoStub implements IGetUserIdRepository {
         async getUserById(userId: number): Promise<CreatedUser | null> {
-            return new Promise((resolve) => resolve(dataUser()))
+            return new Promise((resolve) =>
+                resolve({
+                    id: 1,
+                    name: 'any_name',
+                    email: 'any_email@email.com',
+                    password: 'hash_password',
+                    price_hour: 10.5,
+                    createdAt: new Date('2023-03-08T09:00'),
+                    updatedAt: new Date('2023-03-08T09:00'),
+                })
+            )
         }
     }
     return new GetUserByEmailRepoStub()
@@ -107,5 +116,11 @@ describe('test authenticateUserUseCase', () => {
         )
         const result = await sut.execute({ authorization: 'Bearer any_token' })
         expect(result).toEqual(new AuthenticationError('Expired token.'))
+    })
+
+    test('test return an user on success if getUserById return an user', async () => {
+        const { sut } = makeSut()
+        const result = await sut.execute({ authorization: 'Bearer any_token' })
+        expect(result).toEqual(dataUser())
     })
 })

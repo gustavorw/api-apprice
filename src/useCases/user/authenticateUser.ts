@@ -1,13 +1,8 @@
-import { number, string } from 'zod'
 import { IDecrypt } from '../../helpers/encrypt/interfaces/IDecrypt'
 import { AuthenticationError } from '../../helpers/http/errors/authenticationError'
-import { CreatedUser } from '../../types/user'
+import { CreatedUser, Header } from '../../types/user'
 import { IUseCase } from '../IUseCase'
 import { IGetUserIdRepository } from '../../repositories/user/intefaces/IGetUserIdRepository'
-
-type Header = {
-    authorization?: string
-}
 
 class AuthenticateUserUseCase
     implements IUseCase<Header, CreatedUser, AuthenticationError>
@@ -33,22 +28,14 @@ class AuthenticateUserUseCase
         if (!/^[0-9]*$/.test(value as string)) {
             return new AuthenticationError('Expired token.')
         }
-        const user = await this.getUserIdREpository.getUserById(value as number)
-        if (!user) {
+        const userExists = await this.getUserIdREpository.getUserById(
+            value as number
+        )
+        if (!userExists) {
             return new AuthenticationError('Expired token.')
         }
-
-        return new Promise((resolve) =>
-            resolve({
-                id: 1,
-                name: 'any_name',
-                email: 'any_email@email.com',
-                password: 'hash_password',
-                price_hour: 10.5,
-                createdAt: new Date('2023-03-08T09:00'),
-                updatedAt: new Date('2023-03-08T09:00'),
-            })
-        )
+        const { password: _, ...user } = userExists
+        return user
     }
 }
 

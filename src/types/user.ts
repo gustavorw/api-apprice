@@ -29,4 +29,14 @@ type LoginUserDTO = {
     password: string
 }
 
-export { CreatedUser, CreateUserRepoDTO, CreateUserUseCaseDTO, LoginUserDTO }
+type Header = {
+    authorization?: string
+}
+
+export {
+    CreatedUser,
+    CreateUserRepoDTO,
+    CreateUserUseCaseDTO,
+    LoginUserDTO,
+    Header,
+}
