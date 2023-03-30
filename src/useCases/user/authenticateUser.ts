@@ -31,10 +31,12 @@ class AuthenticateUserUseCase
         }
         const value = await this.decrypter.decrypt(token)
         if (!/^[0-9]*$/.test(value as string)) {
-            return new AuthenticationError(value as string)
+            return new AuthenticationError('Expired token.')
         }
-        const userId = Number(value)
-        await this.getUserIdREpository.getUserById(userId)
+        const user = await this.getUserIdREpository.getUserById(value as number)
+        if (!user) {
+            return new AuthenticationError('Expired token.')
+        }
 
         return new Promise((resolve) =>
             resolve({

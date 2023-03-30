@@ -81,7 +81,7 @@ describe('test authenticateUserUseCase', () => {
         expect(decrypterStubSpy).toHaveBeenCalledWith('any_token')
     })
 
-    test('test return authenticateError if verify returns expired token message', async () => {
+    test('test return authenticateError if decrypt returns expired token message', async () => {
         const { sut, decrypterStub } = makeSut()
         vi.spyOn(decrypterStub, 'decrypt').mockReturnValue(
             new Promise<number | string>((resolve) => resolve('Expired token.'))
@@ -98,5 +98,14 @@ describe('test authenticateUserUseCase', () => {
         )
         await sut.execute({ authorization: 'Bearer any_token' })
         expect(getUserByEmailRepoStubSpy).toHaveBeenCalledWith(1)
+    })
+
+    test('test return authenticateError if getUserById returns null', async () => {
+        const { sut, getUserByEmailRepoStub } = makeSut()
+        vi.spyOn(getUserByEmailRepoStub, 'getUserById').mockReturnValue(
+            new Promise<CreatedUser | null>((resolve) => resolve(null))
+        )
+        const result = await sut.execute({ authorization: 'Bearer any_token' })
+        expect(result).toEqual(new AuthenticationError('Expired token.'))
     })
 })
