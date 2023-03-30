@@ -30,8 +30,8 @@ class AuthenticateUserUseCase
             return new AuthenticationError('Token badly formatted.')
         }
         const value = await this.decrypter.decrypt(token)
-        if (value === 'Expired token.') {
-            return new AuthenticationError(value)
+        if (!/^[0-9]*$/.test(value as string)) {
+            return new AuthenticationError(value as string)
         }
         const userId = Number(value)
         await this.getUserIdREpository.getUserById(userId)
