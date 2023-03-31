@@ -1,4 +1,5 @@
 import { AuthenticationError } from '../../../../helpers/http/errors/authenticationError'
+import { unauthorized } from '../../../../helpers/http/responses'
 import { httpRequest, httpResponse } from '../../../../types/http'
 import { CreatedUser, Header } from '../../../../types/user'
 import { IUseCase } from '../../../../useCases/IUseCase'
@@ -14,7 +15,12 @@ class AuthMiddleware implements IMiddleware {
     ) {}
 
     async handle(httpResquest: httpRequest): Promise<httpResponse> {
-        await this.authenticateUserUseCase.execute(httpResquest.headers)
+        const user = await this.authenticateUserUseCase.execute(
+            httpResquest.headers
+        )
+        if (user instanceof AuthenticationError) {
+            return unauthorized(user.message)
+        }
         return {
             body: {
                 any: '',
