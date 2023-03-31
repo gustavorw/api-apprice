@@ -4,7 +4,7 @@ import { IUseCase } from '../../../../src/useCases/IUseCase'
 import { IMiddleware } from '../../../../src/config/middlewares/inputDataValidation/IMiddleware'
 import { CreatedUser, Header } from '../../../../src/types/user'
 import { AuthenticationError } from '../../../../src/helpers/http/errors/authenticationError'
-import { unauthorized } from '../../../../src/helpers/http/responses'
+import { ok, unauthorized } from '../../../../src/helpers/http/responses'
 
 const fakeData = () => ({
     headers: {
@@ -58,7 +58,7 @@ describe('test authMiddleware', () => {
         expect(authenticateUserStubSpy).toHaveBeenCalledWith(fakeData().headers)
     })
 
-    test('test return unauthorized if not headers', async () => {
+    test('test return 401 if not headers', async () => {
         const { sut, authenticateUserStub } = makeSut()
         vi.spyOn(authenticateUserStub, 'execute').mockReturnValue(
             new Promise((resolve) =>
@@ -72,7 +72,7 @@ describe('test authMiddleware', () => {
         )
     })
 
-    test('test return unauthorized if token not devided in two parts', async () => {
+    test('test return 401 if token not devided in two parts', async () => {
         const { sut, authenticateUserStub } = makeSut()
         vi.spyOn(authenticateUserStub, 'execute').mockReturnValue(
             new Promise((resolve) =>
@@ -88,7 +88,7 @@ describe('test authMiddleware', () => {
         expect(httpResponse.body).toEqual(unauthorized('Invalid token.').body)
     })
 
-    test('test return unauthorized if token badly formatted', async () => {
+    test('test return 401 if token badly formatted', async () => {
         const { sut, authenticateUserStub } = makeSut()
         vi.spyOn(authenticateUserStub, 'execute').mockReturnValue(
             new Promise((resolve) =>
@@ -104,5 +104,12 @@ describe('test authMiddleware', () => {
         expect(httpResponse.body).toEqual(
             unauthorized('Token badly formatted.').body
         )
+    })
+
+    test('test return 200 if token is valid', async () => {
+        const { sut } = makeSut()
+        const httpResponse = await sut.handle(fakeData())
+        expect(httpResponse.statusCode).toBe(200)
+        expect(httpResponse.body.userId).toBeTruthy()
     })
 })

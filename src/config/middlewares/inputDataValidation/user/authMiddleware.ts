@@ -1,5 +1,5 @@
 import { AuthenticationError } from '../../../../helpers/http/errors/authenticationError'
-import { unauthorized } from '../../../../helpers/http/responses'
+import { ok, unauthorized } from '../../../../helpers/http/responses'
 import { httpRequest, httpResponse } from '../../../../types/http'
 import { CreatedUser, Header } from '../../../../types/user'
 import { IUseCase } from '../../../../useCases/IUseCase'
@@ -21,12 +21,7 @@ class AuthMiddleware implements IMiddleware {
         if (user instanceof AuthenticationError) {
             return unauthorized(user.message)
         }
-        return {
-            body: {
-                any: '',
-            },
-            statusCode: 200,
-        }
+        return ok({ userId: user.id })
     }
 }
 
