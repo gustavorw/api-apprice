@@ -9,7 +9,7 @@ const middlewareAdapter = (middleware: IMiddleware) => {
         }
 
         const httpResponse: httpResponse = await middleware.handle(httpRequest)
-        if (httpResponse.body.success) {
+        if (httpResponse.statusCode === 200) {
             next()
         } else {
             res.status(httpResponse.statusCode).json({
