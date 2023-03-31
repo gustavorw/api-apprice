@@ -4,7 +4,11 @@ import { IUseCase } from '../../../../src/useCases/IUseCase'
 import { IMiddleware } from '../../../../src/config/middlewares/inputDataValidation/IMiddleware'
 import { CreatedUser, Header } from '../../../../src/types/user'
 import { AuthenticationError } from '../../../../src/helpers/http/errors/authenticationError'
-import { ok, unauthorized } from '../../../../src/helpers/http/responses'
+import {
+    ok,
+    serverError,
+    unauthorized,
+} from '../../../../src/helpers/http/responses'
 
 const fakeData = () => ({
     headers: {
@@ -104,6 +108,23 @@ describe('test authMiddleware', () => {
         expect(httpResponse.body).toEqual(
             unauthorized('Token badly formatted.').body
         )
+    })
+
+    test('test return 500 if authenticateUserUseCase raise exception', async () => {
+        const { sut, authenticateUserStub } = makeSut()
+        vi.spyOn(authenticateUserStub, 'execute').mockImplementation(
+            async () =>
+                new Promise<CreatedUser | AuthenticationError>(
+                    (resolve, reject) => reject(new Error())
+                )
+        )
+        const httpResponse = await sut.handle({
+            headers: {
+                authorization: 'token any_token',
+            },
+        })
+        expect(httpResponse.statusCode).toBe(500)
+        expect(httpResponse.body).toEqual(serverError().body)
     })
 
     test('test return 200 if token is valid', async () => {
