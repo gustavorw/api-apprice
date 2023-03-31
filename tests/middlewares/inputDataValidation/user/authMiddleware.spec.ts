@@ -71,4 +71,20 @@ describe('test authMiddleware', () => {
             unauthorized('Token not provided.').body
         )
     })
+
+    test('test return unauthorized if token not devided in two parts', async () => {
+        const { sut, authenticateUserStub } = makeSut()
+        vi.spyOn(authenticateUserStub, 'execute').mockReturnValue(
+            new Promise((resolve) =>
+                resolve(new AuthenticationError('Invalid token.'))
+            )
+        )
+        const httpResponse = await sut.handle({
+            headers: {
+                authorization: 'Bearerany_token',
+            },
+        })
+        expect(httpResponse.statusCode).toBe(401)
+        expect(httpResponse.body).toEqual(unauthorized('Invalid token.').body)
+    })
 })
