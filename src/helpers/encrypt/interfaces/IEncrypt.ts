@@ -1,5 +1,5 @@
 interface IEncrypt {
-    encrypt(value: number): Promise<string | number>
+    encrypt(value: number): Promise<string>
 }
 
 export { IEncrypt }

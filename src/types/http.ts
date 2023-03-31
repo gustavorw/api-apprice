@@ -1,5 +1,6 @@
 type httpRequest = {
     body?: any
+    headers?: any
 }
 
 type httpResponse = {
