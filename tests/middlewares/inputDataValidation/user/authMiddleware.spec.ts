@@ -87,4 +87,22 @@ describe('test authMiddleware', () => {
         expect(httpResponse.statusCode).toBe(401)
         expect(httpResponse.body).toEqual(unauthorized('Invalid token.').body)
     })
+
+    test('test return unauthorized if token badly formatted', async () => {
+        const { sut, authenticateUserStub } = makeSut()
+        vi.spyOn(authenticateUserStub, 'execute').mockReturnValue(
+            new Promise((resolve) =>
+                resolve(new AuthenticationError('Token badly formatted.'))
+            )
+        )
+        const httpResponse = await sut.handle({
+            headers: {
+                authorization: 'token any_token',
+            },
+        })
+        expect(httpResponse.statusCode).toBe(401)
+        expect(httpResponse.body).toEqual(
+            unauthorized('Token badly formatted.').body
+        )
+    })
 })
