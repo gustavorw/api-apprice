@@ -6,6 +6,7 @@ const middlewareAdapter = (middleware: IMiddleware) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         const httpRequest: httpRequest = {
             body: req.body,
+            headers: req.headers,
         }
 
         const httpResponse: httpResponse = await middleware.handle(httpRequest)

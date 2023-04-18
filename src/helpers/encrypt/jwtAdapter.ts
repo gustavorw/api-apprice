@@ -10,7 +10,7 @@ class JwtAdapter implements IEncrypt, IDecrypt {
     constructor(private readonly secret: string) {}
 
     async encrypt(value: number): Promise<string> {
-        const token = jwt.sign({ id: value }, this.secret, { expiresIn: '1d' })
+        const token = jwt.sign({ id: value }, this.secret, { expiresIn: '8h' })
         return token
     }
 
