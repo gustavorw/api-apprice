@@ -32,11 +32,19 @@ describe('test jwtAdapter', () => {
         expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
     })
 
-    test('test return any value on verify', async () => {
+    test('test return expired token on verify', async () => {
         const sut = makeSut()
-        vi.spyOn(jwt, 'verify').mockReturnValue({ id: 1 } as any)
+        vi.spyOn(jwt, 'verify').mockImplementation(new Error() as any)
 
         const value = await sut.decrypt('any_token')
-        expect(value).toEqual({ id: 1 })
+        expect(value).toEqual('Expired Token.')
+    })
+
+    test('test return an id on verify', async () => {
+        const sut = makeSut()
+        vi.spyOn(jwt, 'verify').mockReturnValue({ id: 1, it: 233.8 } as any)
+
+        const value = await sut.decrypt('any_token')
+        expect(value).toEqual(1)
     })
 })

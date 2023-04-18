@@ -15,7 +15,12 @@ class JwtAdapter implements IEncrypt, IDecrypt {
     }
 
     async decrypt(token: string): Promise<string | number> {
-        return jwt.verify(token, this.secret) as any
+        try {
+            const { id } = jwt.verify(token, this.secret) as JwtPayload
+            return id
+        } catch (error) {
+            return 'Expired Token.'
+        }
     }
 }
 
