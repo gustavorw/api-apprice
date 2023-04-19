@@ -54,4 +54,13 @@ describe('test private router', () => {
             .set('Authorization', `Token ${token}`)
             .expect(401)
     })
+
+    test('test return unauthorized if invalid token', async () => {
+        const user = await createUser()
+        const token = createToken(user.id)
+        await resquest(app)
+            .get('/api/v1/user/profile')
+            .set('Authorization', `Bearer${token}`)
+            .expect(401)
+    })
 })
