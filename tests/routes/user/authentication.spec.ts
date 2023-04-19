@@ -1,4 +1,4 @@
-import { afterAll, describe, test } from 'vitest'
+import { afterEach, describe, test } from 'vitest'
 import resquest from 'supertest'
 import { app } from '../../../src/config/app'
 import { clientdB } from '../../../src/database/client'
@@ -28,7 +28,7 @@ const createToken = (userId: number) => {
 }
 
 describe('test private router', () => {
-    afterAll(async () => {
+    afterEach(async () => {
         await client.user.deleteMany({})
     })
 
@@ -44,5 +44,14 @@ describe('test private router', () => {
             .get('/api/v1/user/profile')
             .set('Authorization', `Bearer ${token}`)
             .expect(200)
+    })
+
+    test('test return unauthorized if token badly formated', async () => {
+        const user = await createUser()
+        const token = createToken(user.id)
+        await resquest(app)
+            .get('/api/v1/user/profile')
+            .set('Authorization', `Token ${token}`)
+            .expect(401)
     })
 })
