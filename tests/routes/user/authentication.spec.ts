@@ -15,6 +15,18 @@ const data = {
     updatedAt: new Date('2023-03-08T09:00'),
 }
 
+const createUser = async () => {
+    const user = await client.user.create({ data })
+    return user
+}
+
+const createToken = (userId: number) => {
+    const token = jwt.sign({ id: userId }, env.secret_key, {
+        expiresIn: '8h',
+    })
+    return token
+}
+
 describe('test private router', () => {
     afterAll(async () => {
         await client.user.deleteMany({})
@@ -25,10 +37,8 @@ describe('test private router', () => {
     })
 
     test('test return ok', async () => {
-        const user = await client.user.create({ data })
-        const token = jwt.sign({ id: user.id }, env.secret_key, {
-            expiresIn: '8h',
-        })
+        const user = await createUser()
+        const token = createToken(user.id)
 
         await resquest(app)
             .get('/api/v1/user/profile')
