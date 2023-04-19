@@ -63,4 +63,11 @@ describe('test private router', () => {
             .set('Authorization', `Bearer${token}`)
             .expect(401)
     })
+
+    test('test return unauthorized if user not exists', async () => {
+        await resquest(app)
+            .get('/api/v1/user/profile')
+            .set('Authorization', `Bearer lefjoiejfnsouifeifwjfowiejfooofiw`)
+            .expect(401)
+    })
 })

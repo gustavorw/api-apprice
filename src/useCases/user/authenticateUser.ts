@@ -32,7 +32,7 @@ class AuthenticateUserUseCase
             value as number
         )
         if (!userExists) {
-            return new AuthenticationError('Expired token.')
+            return new AuthenticationError('Invalid token.')
         }
         const { password: _, ...user } = userExists
         return user

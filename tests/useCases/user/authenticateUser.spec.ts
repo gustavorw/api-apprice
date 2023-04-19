@@ -115,7 +115,7 @@ describe('test authenticateUserUseCase', () => {
             new Promise<CreatedUser | null>((resolve) => resolve(null))
         )
         const result = await sut.execute({ authorization: 'Bearer any_token' })
-        expect(result).toEqual(new AuthenticationError('Expired token.'))
+        expect(result).toEqual(new AuthenticationError('Invalid token.'))
     })
 
     test('test return an user on success if getUserById return an user', async () => {
