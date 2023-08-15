@@ -33,10 +33,15 @@ type Header = {
     authorization?: string
 }
 
+type UserId = {
+    userId: number
+}
+
 export {
     CreatedUser,
     CreateUserRepoDTO,
     CreateUserUseCaseDTO,
     LoginUserDTO,
     Header,
+    UserId,
 }
