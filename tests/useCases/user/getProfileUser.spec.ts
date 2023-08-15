@@ -2,12 +2,11 @@ import { describe, expect, test, vi } from 'vitest'
 import { IGetUserIdRepository } from '../../../src/repositories/user/intefaces/IGetUserIdRepository'
 import { CreatedUser, UserId } from '../../../src/types/user'
 import { IUseCase } from '../../../src/useCases/IUseCase'
-import { UserNotExists } from '../../../src/helpers/http/errors/userNotExists'
 import { GetProfileUserUseCase } from '../../../src/useCases/user/getProfileUser'
 
 type SutTypes = {
     getUserByEmailRepoStub: IGetUserIdRepository
-    sut: IUseCase<UserId, CreatedUser, UserNotExists>
+    sut: IUseCase<UserId, CreatedUser, null>
 }
 
 const makeGetUserIdRepository = (): IGetUserIdRepository => {
@@ -56,5 +55,20 @@ describe('test get profileUserUseCase', () => {
         expect(getUserByEmailRepoStubSpy).toHaveBeenCalledWith(
             dataUser()['userId']
         )
+    })
+
+    test('test return user data', async () => {
+        const { sut } = makeSut()
+
+        const user = await sut.execute(dataUser())
+
+        expect(user).toEqual({
+            id: 1,
+            name: 'any_name',
+            email: 'any_email@email.com',
+            price_hour: 10.5,
+            createdAt: new Date('2023-03-08T09:00'),
+            updatedAt: new Date('2023-03-08T09:00'),
+        })
     })
 })
