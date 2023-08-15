@@ -1,4 +1,4 @@
-import { serverError } from '../../helpers/http/responses'
+import { ok, serverError } from '../../helpers/http/responses'
 import { httpRequest, httpResponse } from '../../types/http'
 import { CreatedUser, UserId } from '../../types/user'
 import { IUseCase } from '../../useCases/IUseCase'
@@ -15,10 +15,10 @@ class GetUserProfileController implements IController {
 
     async handle(httpResquest: httpRequest): Promise<httpResponse> {
         try {
-            await this.getUserByIdRepository.execute({
+            const httpResponse = await this.getUserByIdRepository.execute({
                 userId: httpResquest.userId as number,
             })
-            return { statusCode: 200, body: '' }
+            return ok(httpResponse)
         } catch (error) {
             return serverError()
         }

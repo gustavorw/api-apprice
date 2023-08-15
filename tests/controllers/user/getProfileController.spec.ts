@@ -3,7 +3,7 @@ import { IController } from '../../../src/controllers/IController'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { CreatedUser, UserId } from '../../../src/types/user'
 import { GetUserProfileController } from '../../../src/controllers/user/getProfileController'
-import { serverError } from '../../../src/helpers/http/responses'
+import { ok, serverError } from '../../../src/helpers/http/responses'
 
 type SutType = {
     sut: IController
@@ -12,6 +12,15 @@ type SutType = {
 
 const data = (): UserId => ({
     userId: 1,
+})
+
+const returnData = (): CreatedUser => ({
+    id: 1,
+    name: 'any_name',
+    email: 'any_email@email.com',
+    price_hour: 10.5,
+    createdAt: new Date('2023-03-08T09:00'),
+    updatedAt: new Date('2023-03-08T09:00'),
 })
 
 const makeGetProfileUser = (): IUseCase<UserId, CreatedUser, null> => {
@@ -70,5 +79,14 @@ describe('test get user profile controller', () => {
         const httpResponse = await sut.handle(data())
         expect(httpResponse.statusCode).toBe(500)
         expect(httpResponse.body).toEqual(serverError().body)
+    })
+
+    test('test return status 200 with correct values', async () => {
+        const { sut } = makeSut()
+
+        const httpResponse = await sut.handle(data())
+
+        expect(httpResponse.statusCode).toBe(200)
+        expect(httpResponse.body).toEqual(ok(returnData()).body)
     })
 })
