@@ -1,3 +1,4 @@
+import { serverError } from '../../helpers/http/responses'
 import { httpRequest, httpResponse } from '../../types/http'
 import { CreatedUser, UserId } from '../../types/user'
 import { IUseCase } from '../../useCases/IUseCase'
@@ -13,10 +14,14 @@ class GetUserProfileController implements IController {
     ) {}
 
     async handle(httpResquest: httpRequest): Promise<httpResponse> {
-        await this.getUserByIdRepository.execute({
-            userId: httpResquest.userId as number,
-        })
-        return { statusCode: 200, body: '' }
+        try {
+            await this.getUserByIdRepository.execute({
+                userId: httpResquest.userId as number,
+            })
+            return { statusCode: 200, body: '' }
+        } catch (error) {
+            return serverError()
+        }
     }
 }
 

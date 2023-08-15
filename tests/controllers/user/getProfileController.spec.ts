@@ -3,6 +3,7 @@ import { IController } from '../../../src/controllers/IController'
 import { IUseCase } from '../../../src/useCases/IUseCase'
 import { CreatedUser, UserId } from '../../../src/types/user'
 import { GetUserProfileController } from '../../../src/controllers/user/getProfileController'
+import { serverError } from '../../../src/helpers/http/responses'
 
 type SutType = {
     sut: IController
@@ -55,5 +56,19 @@ describe('test get user profile controller', () => {
 
         await sut.handle(data())
         expect(getProfileUserUseCaseStubSpy).toHaveBeenLastCalledWith(data())
+    })
+
+    test('test return status 500 if getUserProfileService raize exception', async () => {
+        const { sut, getProfileUserUseCaseStub } = makeSut()
+        vi.spyOn(getProfileUserUseCaseStub, 'execute').mockImplementationOnce(
+            async () =>
+                new Promise<CreatedUser | null>((resolve, reject) =>
+                    reject(new Error())
+                )
+        )
+
+        const httpResponse = await sut.handle(data())
+        expect(httpResponse.statusCode).toBe(500)
+        expect(httpResponse.body).toEqual(serverError().body)
     })
 })
