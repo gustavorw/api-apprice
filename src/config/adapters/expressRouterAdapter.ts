@@ -6,6 +6,7 @@ const routerAdapter = (controller: IController) => {
     return async (req: Request, res: Response) => {
         const httpResquest: httpRequest = {
             body: req.body,
+            userId: req.userId,
         }
         const httpResponse: httpResponse = await controller.handle(httpResquest)
         res.status(httpResponse.statusCode).json(httpResponse.body)
