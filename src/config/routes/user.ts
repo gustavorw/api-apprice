@@ -6,6 +6,7 @@ import { CreateUserMiddleware } from '../middlewares/inputDataValidation/user/cr
 import { makeLoginController } from '../factories/user/login'
 import { LoginMiddleware } from '../middlewares/inputDataValidation/user/loginUserMiddleware'
 import { makeAuthMiddleware } from '../factories/user/authentication'
+import { makeGetProfileController } from '../factories/user/getProfile'
 
 const setUserRoutes = (router: Router): Router => {
     router.post(
@@ -21,11 +22,7 @@ const setUserRoutes = (router: Router): Router => {
     router.get(
         '/profile',
         middlewareAdapter(makeAuthMiddleware()),
-        (req: Request, res: Response) => {
-            return res.status(200).json({
-                message: 'Deu certo!',
-            })
-        }
+        routerAdapter(makeGetProfileController())
     )
     return router
 }
