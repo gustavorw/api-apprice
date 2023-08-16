@@ -6,7 +6,7 @@ import { IController } from '../IController'
 
 class GetUserProfileController implements IController {
     constructor(
-        private readonly getUserByIdRepository: IUseCase<
+        private readonly getUserProfileUseCase: IUseCase<
             UserId,
             CreatedUser,
             null
@@ -15,7 +15,7 @@ class GetUserProfileController implements IController {
 
     async handle(httpResquest: httpRequest): Promise<httpResponse> {
         try {
-            const httpResponse = await this.getUserByIdRepository.execute({
+            const httpResponse = await this.getUserProfileUseCase.execute({
                 userId: httpResquest.userId as number,
             })
             return ok(httpResponse)

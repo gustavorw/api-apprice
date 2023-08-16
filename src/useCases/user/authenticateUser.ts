@@ -26,7 +26,7 @@ class AuthenticateUserUseCase
         }
         const value = await this.decrypter.decrypt(token)
         if (!/^[0-9]*$/.test(value as string)) {
-            return new AuthenticationError('Expired token.')
+            return new AuthenticationError('Invalid token.')
         }
         const userExists = await this.getUserIdREpository.getUserById(
             value as number
